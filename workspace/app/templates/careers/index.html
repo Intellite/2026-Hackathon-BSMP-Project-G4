@@ -1,0 +1,46 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+  <div class="row g-3">
+    <div class="col-12 col-lg-5">
+      <div class="card rounded-4 shadow-sm border-0 p-4">
+        <h2 class="h5 fw-bold">Career Explorer</h2>
+        <p class="text-muted small">Enter your interests and skills—AI will generate career recommendations.</p>
+
+        <form method="post" action="{{ url_for('careers.generate') }}" class="mt-3">
+          <div class="mb-3">
+            <label class="form-label">Interests</label>
+            <input name="interests" class="form-control" placeholder="e.g., technology, healthcare" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Favorite subjects</label>
+            <input name="subjects" class="form-control" placeholder="e.g., math, biology" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Activities</label>
+            <input name="activities" class="form-control" placeholder="e.g., robotics club" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Skills</label>
+            <input name="skills" class="form-control" placeholder="e.g., coding, communication" />
+          </div>
+          <button class="btn btn-primary w-100" type="submit">Generate Careers</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+      <div class="card rounded-4 shadow-sm border-0 p-4">
+        <h3 class="h6 fw-bold">What you’ll get</h3>
+        <ul class="text-muted small mt-3">
+          <li>Career recommendations with match percentages</li>
+          <li>Salary estimates and required education</li>
+          <li>Recommended skills to build next</li>
+        </ul>
+        <div class="mt-4 chart-placeholder rounded-4 p-4">
+          <div class="fw-semibold">Charts placeholder</div>
+          <div class="text-muted small">Swap this with real charts later.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

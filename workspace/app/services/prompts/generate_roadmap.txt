@@ -1,0 +1,1 @@
+Generate a JSON object with key: roadmap (array). Each phase: phase, summary, steps (array of strings). Phases: High School Phase, College/Certification Phase, Early Career Phase, Advanced Career Phase.

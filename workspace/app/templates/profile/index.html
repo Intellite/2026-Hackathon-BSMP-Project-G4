@@ -1,0 +1,35 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+    <h2 class="h5 fw-bold">Profile Center</h2>
+    <a class="btn btn-outline-primary" href="{{ url_for('dashboard.index') }}">Back</a>
+  </div>
+
+  <div class="card rounded-4 shadow-sm border-0 p-4">
+    <form method="post" action="{{ url_for('profile.update') }}">
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label">Interests</label>
+          <input name="interests" class="form-control" value="{{ user.interests or '' }}" />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">Career Goals</label>
+          <input name="career_goals" class="form-control" value="{{ user.career_goals or '' }}" />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">Skills</label>
+          <input name="skills" class="form-control" value="{{ user.skills or '' }}" />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">GPA</label>
+          <input name="gpa" class="form-control" value="{{ user.gpa or '' }}" />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Activities</label>
+          <input name="activities" class="form-control" value="{{ user.activities or '' }}" />
+        </div>
+      </div>
+      <button class="btn btn-primary mt-4" type="submit">Save Changes</button>
+    </form>
+  </div>
+{% endblock %}

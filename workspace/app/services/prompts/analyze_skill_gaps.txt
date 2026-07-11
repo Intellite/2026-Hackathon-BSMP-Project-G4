@@ -1,0 +1,1 @@
+Generate JSON with keys: gaps (array of {name,current_percent}), suggested_activities (array of strings). Compare student_profile vs target_career.

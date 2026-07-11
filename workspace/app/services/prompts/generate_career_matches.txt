@@ -1,0 +1,2 @@
+Generate career recommendations as JSON with key: careers (array). Each career: title, match_percentage (0-100), salary_low, salary_high, education, description, required_skills.
+Use the provided student inputs to tailor results.

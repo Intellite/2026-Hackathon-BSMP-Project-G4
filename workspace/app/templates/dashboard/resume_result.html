@@ -1,0 +1,48 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+    <h2 class="h5 fw-bold">Resume Analysis</h2>
+    <a class="btn btn-outline-primary" href="{{ url_for('resume.index') }}">Back</a>
+  </div>
+
+  {% if result %}
+    <div class="row g-3">
+      <div class="col-12 col-lg-4">
+        <div class="card rounded-4 shadow-sm border-0 p-4">
+          <div class="text-muted small">Overall Score</div>
+          <div class="display-6 fw-bold text-primary">{{ result.score }}/100</div>
+          <div class="progress mt-3" style="height: 10px;">
+            <div class="progress-bar" style="width: {{ result.score }}%"></div>
+          </div>
+          <div class="text-muted small mt-2">Prototype scoring indicator.</div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="card rounded-4 shadow-sm border-0 p-4">
+          <div class="fw-bold">Strengths</div>
+          <ul class="mt-2 mb-0">
+            {% for s in result.strengths %}
+              <li class="text-muted small">{{ s }}</li>
+            {% endfor %}
+          </ul>
+          <hr />
+          <div class="fw-bold">Weaknesses</div>
+          <ul class="mt-2 mb-0">
+            {% for w in result.weaknesses %}
+              <li class="text-muted small">{{ w }}</li>
+            {% endfor %}
+          </ul>
+          <hr />
+          <div class="fw-bold">Recommended Improvements</div>
+          <ul class="mt-2 mb-0">
+            {% for i in result.improvements %}
+              <li class="text-muted small">{{ i }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">No analysis returned.</div>
+  {% endif %}
+{% endblock %}

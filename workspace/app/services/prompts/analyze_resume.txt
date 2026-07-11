@@ -1,0 +1,1 @@
+Analyze resume text and return JSON with keys: score (0-100), strengths (array), weaknesses (array), improvements (array), skill_recommendations (array).

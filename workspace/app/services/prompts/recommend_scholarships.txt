@@ -1,0 +1,1 @@
+Recommend scholarships as JSON with key recommendations (array). Each recommendation: name, award_amount, eligibility, deadline, match_percentage.
