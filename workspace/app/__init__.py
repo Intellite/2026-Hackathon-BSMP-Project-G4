@@ -48,6 +48,7 @@ def create_app() -> Flask:
     # Blueprints
     from app.routes.home_routes import home_bp
     from app.routes.auth_routes import auth_bp
+    from app.routes.survey_routes import survey_bp
     from app.routes.dashboard_routes import dashboard_bp
     from app.routes.careers_routes import careers_bp
     from app.routes.roadmap_routes import roadmap_bp
@@ -60,6 +61,7 @@ def create_app() -> Flask:
 
     app.register_blueprint(home_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(survey_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(careers_bp)
     app.register_blueprint(roadmap_bp)

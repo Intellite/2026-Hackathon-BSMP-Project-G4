@@ -12,10 +12,12 @@ class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(String(255), unique=True, nullable=False, index=True)
+    username = db.Column(String(120), unique=True, nullable=False, index=True)
+    # Kept for backward compatibility with existing prototype data.
+    email = db.Column(String(255), unique=True, nullable=True, index=True)
     password_hash = db.Column(String(255), nullable=False)
 
-    name = db.Column(String(120), nullable=False)
+    name = db.Column(String(120), nullable=True)
     grade_level = db.Column(String(50), nullable=True)
     school = db.Column(String(120), nullable=True)
 
@@ -26,6 +28,8 @@ class User(db.Model, UserMixin):
     skills = db.Column(String(500), nullable=True)  # comma-separated
     activities = db.Column(String(500), nullable=True)  # comma-separated
     gpa = db.Column(db.Float, nullable=True)
+
+    survey_completed = db.Column(db.Boolean, nullable=False, default=False)
 
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 

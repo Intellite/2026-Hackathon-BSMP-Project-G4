@@ -11,6 +11,11 @@ import requests
 
 from config import Config
 
+# Ensure .env is loaded when running via scripts/tests.
+from dotenv import load_dotenv
+
+load_dotenv()
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,6 +51,9 @@ class AIService:
         self.cfg = Config
         self.rate_limiter = RateLimiter(self.cfg.AI_RATE_LIMIT_PER_MINUTE)
 
+        # Provider selection
+        self._use_azure = bool(self.cfg.AZURE_OPENAI_ENDPOINT and self.cfg.AZURE_OPENAI_API_KEY)
+
     def _prompt_path(self, name: str) -> Path:
         return Path(__file__).resolve().parent / "prompts" / f"{name}.txt"
 
@@ -70,10 +78,52 @@ class AIService:
             "temperature": 0.4,
         }
 
-        resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)
+        resp = requests.post(url, headers=headers, json=payload, timeout=30)
         resp.raise_for_status()
         data = resp.json()
         return data["choices"][0]["message"]["content"]
+
+    def _call_azure_openai(self, messages: list[dict[str, str]]) -> str:
+        if not self.cfg.AZURE_OPENAI_ENDPOINT or not self.cfg.AZURE_OPENAI_API_KEY:
+            return ""
+
+        deployment = self.cfg.AZURE_OPENAI_DEPLOYMENT or self.cfg.AI_MODEL
+        if not deployment:
+            return ""
+
+        # Azure OpenAI chat completions endpoint
+        # Example: https://{resource}.openai.azure.com/openai/deployments/{deployment}/chat/completions?api-version=2024-02-15-preview
+        base = self.cfg.AZURE_OPENAI_ENDPOINT.rstrip("/")
+        # Try a couple of common api versions for Azure OpenAI.
+        api_versions = ["2024-02-15-preview", "2024-06-01"]
+
+        headers = {
+            "api-key": self.cfg.AZURE_OPENAI_API_KEY,
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "messages": messages,
+            "temperature": 0.4,
+        }
+
+        last_err: Exception | None = None
+        for api_version in api_versions:
+            url = f"{base}/openai/deployments/{deployment}/chat/completions?api-version={api_version}"
+            try:
+                resp = requests.post(url, headers=headers, json=payload, timeout=30)
+                resp.raise_for_status()
+                data = resp.json()
+                return data["choices"][0]["message"]["content"]
+            except Exception as e:  # noqa: BLE001
+                last_err = e
+                continue
+
+        raise last_err or RuntimeError("Azure OpenAI call failed")
+
+    def _call_chat(self, messages: list[dict[str, str]]) -> str:
+        if self._use_azure:
+            return self._call_azure_openai(messages)
+        return self._call_openai_compatible(messages)
 
     def _with_retry(self, fn: Callable[[], str], retries: int = 2) -> str:
         last_err: Exception | None = None
@@ -95,7 +145,7 @@ class AIService:
         self._ensure_rate_limit()
         prompt = self._load_prompt("generate_career_matches")
 
-        if not self.cfg.AI_API_KEY or not self.cfg.AI_BASE_URL:
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
             return {
                 "careers": [
                     {
@@ -133,7 +183,7 @@ class AIService:
             {"role": "user", "content": json.dumps(payload)},
         ]
 
-        text = self._with_retry(lambda: self._call_openai_compatible(messages))
+        text = self._with_retry(lambda: self._call_chat(messages))
         try:
             return json.loads(text)
         except Exception:
@@ -143,7 +193,7 @@ class AIService:
         self._ensure_rate_limit()
         prompt = self._load_prompt("generate_roadmap")
 
-        if not self.cfg.AI_API_KEY or not self.cfg.AI_BASE_URL:
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
             return {
                 "roadmap": [
                     {
@@ -189,7 +239,7 @@ class AIService:
             {"role": "system", "content": prompt or "You generate structured roadmaps."},
             {"role": "user", "content": json.dumps(payload)},
         ]
-        text = self._with_retry(lambda: self._call_openai_compatible(messages))
+        text = self._with_retry(lambda: self._call_chat(messages))
         try:
             return json.loads(text)
         except Exception:
@@ -199,7 +249,7 @@ class AIService:
         self._ensure_rate_limit()
         prompt = self._load_prompt("analyze_skill_gaps")
 
-        if not self.cfg.AI_API_KEY or not self.cfg.AI_BASE_URL:
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
             return {
                 "gaps": [
                     {"name": "Python Skill", "current_percent": 80},
@@ -217,7 +267,7 @@ class AIService:
             {"role": "system", "content": prompt or "You analyze skill gaps."},
             {"role": "user", "content": json.dumps(payload)},
         ]
-        text = self._with_retry(lambda: self._call_openai_compatible(messages))
+        text = self._with_retry(lambda: self._call_chat(messages))
         try:
             return json.loads(text)
         except Exception:
@@ -226,13 +276,13 @@ class AIService:
     def recommend_scholarships(self, payload: dict[str, Any]) -> dict[str, Any]:
         self._ensure_rate_limit()
         prompt = self._load_prompt("recommend_scholarships")
-        if not self.cfg.AI_API_KEY or not self.cfg.AI_BASE_URL:
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
             return {"recommendations": []}
         messages = [
             {"role": "system", "content": prompt or "You recommend scholarships."},
             {"role": "user", "content": json.dumps(payload)},
         ]
-        text = self._with_retry(lambda: self._call_openai_compatible(messages))
+        text = self._with_retry(lambda: self._call_chat(messages))
         try:
             return json.loads(text)
         except Exception:
@@ -242,7 +292,7 @@ class AIService:
         self._ensure_rate_limit()
         prompt = self._load_prompt("chat_with_mentor")
 
-        if not self.cfg.AI_API_KEY or not self.cfg.AI_BASE_URL:
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
             msg = payload.get("message", "")
             return (
                 "Thanks for asking!\n\n"
@@ -255,13 +305,13 @@ class AIService:
             {"role": "system", "content": prompt or "You are a supportive student mentor."},
             {"role": "user", "content": json.dumps(payload)},
         ]
-        return self._with_retry(lambda: self._call_openai_compatible(messages))
+        return self._with_retry(lambda: self._call_chat(messages))
 
     def analyze_resume(self, payload: dict[str, Any]) -> dict[str, Any]:
         self._ensure_rate_limit()
         prompt = self._load_prompt("analyze_resume")
 
-        if not self.cfg.AI_API_KEY or not self.cfg.AI_BASE_URL:
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
             return {
                 "score": 78,
                 "strengths": [
@@ -285,7 +335,7 @@ class AIService:
             {"role": "system", "content": prompt or "You analyze resumes and return JSON."},
             {"role": "user", "content": json.dumps(payload)},
         ]
-        text = self._with_retry(lambda: self._call_openai_compatible(messages))
+        text = self._with_retry(lambda: self._call_chat(messages))
         try:
             return json.loads(text)
         except Exception:
@@ -295,7 +345,7 @@ class AIService:
         self._ensure_rate_limit()
         prompt = self._load_prompt("generate_future_projection")
 
-        if not self.cfg.AI_API_KEY or not self.cfg.AI_BASE_URL:
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
             return {
                 "timeline": [
                     {"stage": "Intern", "salary": 45000},
@@ -309,7 +359,7 @@ class AIService:
             {"role": "system", "content": prompt or "You generate future earnings projections."},
             {"role": "user", "content": json.dumps(payload)},
         ]
-        text = self._with_retry(lambda: self._call_openai_compatible(messages))
+        text = self._with_retry(lambda: self._call_chat(messages))
         try:
             return json.loads(text)
         except Exception:

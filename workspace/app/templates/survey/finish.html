@@ -1,0 +1,24 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+  <div class="max-w-2xl mx-auto text-center">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100 text-emerald-700">
+      ✓
+    </div>
+    <div class="survey-card rounded-2xl border border-slate-800 bg-slate-950 shadow-sm p-6 text-white mt-4">
+      <h1 class="text-2xl font-semibold mt-0">Survey complete</h1>
+      <p class="text-slate-300 mt-2">Your recommendations are now unlocked.</p>
+
+      <div class="mt-8 flex items-center justify-center gap-3">
+      <a href="{{ url_for('dashboard.index') }}" class="rounded-xl bg-blue-600 px-6 py-2.5 text-black font-semibold hover:bg-blue-700">
+        Go to dashboard
+      </a>
+      <a href="{{ url_for('survey.retake') }}" class="rounded-xl bg-blue-600 px-6 py-2.5 text-black font-semibold hover:bg-blue-700">
+        Retake survey
+      </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

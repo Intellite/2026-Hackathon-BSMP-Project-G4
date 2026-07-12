@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -54,29 +54,22 @@ def signup_post() -> str:
         return render_template("auth/signup.html", form=form)
 
     existing = db.session.execute(
-        db.select(User).where(User.email == form.email.data)
+        db.select(User).where(User.username == form.username.data)
     ).scalar_one_or_none()
     if existing is not None:
-        flash("Email already registered.", "warning")
+        flash("Username already registered.", "warning")
         return render_template("auth/signup.html", form=form)
 
     user = User(
-        email=form.email.data,
+        username=form.username.data,
         password_hash=generate_password_hash(form.password.data),
-        name=form.name.data,
         grade_level=form.grade_level.data,
-        school=form.school.data,
-        interests=",".join(form.interests.data) if form.interests.data else "",
-        career_goals=form.career_goals.data,
-        skills=",".join(form.skills.data) if form.skills.data else "",
-        activities=",".join(form.activities.data) if form.activities.data else "",
-        gpa=form.gpa.data,
     )
     db.session.add(user)
     db.session.commit()
 
     login_user(user)
-    return redirect(url_for("dashboard.index"))
+    return redirect(url_for("survey.start"))
 
 
 @auth_bp.post("/logout")

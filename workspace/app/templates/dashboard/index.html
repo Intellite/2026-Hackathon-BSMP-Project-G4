@@ -14,12 +14,10 @@
   <div class="row g-3">
     <div class="col-12 col-lg-4">
       <div class="card rounded-4 shadow-sm border-0 p-4">
-        <div class="text-muted small">Career Match Score</div>
-        <div class="display-6 fw-bold text-primary">{{ career_match_score }}%</div>
-        <div class="progress mt-3" role="progressbar" aria-label="Career match" aria-valuenow="{{ career_match_score }}" aria-valuemin="0" aria-valuemax="100">
-          <div class="progress-bar" style="width: {{ career_match_score }}%"></div>
-        </div>
-        <div class="text-muted small mt-2">Based on your interests, skills, and goals (prototype scoring).</div>
+        <div class="text-muted small">Your next best steps</div>
+        <div class="fw-bold fs-4 mt-1">Explore careers & scholarships</div>
+        <div class="text-muted small mt-2">Use the menu to generate tailored results from your survey answers.</div>
+        <a class="btn btn-sm btn-primary w-100 mt-3" href="{{ url_for('careers.index') }}">Explore Careers</a>
       </div>
     </div>
 
@@ -62,11 +60,11 @@
           {% for item in skill_gap_summary %}
             <div class="mb-3">
               <div class="d-flex justify-content-between">
-                <div class="small fw-semibold">{{ item.skill }}</div>
-                <div class="small text-muted">{{ item.percent }}%</div>
+                <div class="small fw-semibold" data-gap-skill>{{ item.skill }}</div>
+                <div class="small text-muted" data-gap-percent>—%</div>
               </div>
               <div class="progress" style="height: 10px;">
-                <div class="progress-bar" style="width: {{ item.percent }}%"></div>
+                <div class="progress-bar" data-gap-bar style="width: 0%"></div>
               </div>
             </div>
           {% endfor %}
@@ -74,4 +72,29 @@
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    (function () {
+      const percentEls = document.querySelectorAll('[data-gap-percent]');
+      const barEls = document.querySelectorAll('[data-gap-bar]');
+      const skillEls = document.querySelectorAll('[data-gap-skill]');
+      if (!percentEls.length || !barEls.length || !skillEls.length) return;
+
+      fetch('{{ url_for("gap.top3") }}', { credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(data => {
+          const top3 = data.top3 || [];
+          for (let i = 0; i < Math.min(3, top3.length, percentEls.length, barEls.length, skillEls.length); i++) {
+            const p = Number(top3[i].current_percent ?? 0);
+            percentEls[i].textContent = p + '%';
+            barEls[i].style.width = p + '%';
+            if (top3[i].name) skillEls[i].textContent = top3[i].name;
+          }
+        })
+        .catch(() => {});
+    })();
+  </script>
 {% endblock %}

@@ -10,26 +10,26 @@
       <div class="row g-3">
         <div class="col-12 col-md-6">
           <label class="form-label">Interests</label>
-          <input name="interests" class="form-control" value="{{ user.interests or '' }}" />
+          <input name="interests" class="form-control" value="{{ user.interests or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
         <div class="col-12 col-md-6">
           <label class="form-label">Career Goals</label>
-          <input name="career_goals" class="form-control" value="{{ user.career_goals or '' }}" />
+          <input name="career_goals" class="form-control" value="{{ user.career_goals or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
         <div class="col-12 col-md-6">
           <label class="form-label">Skills</label>
-          <input name="skills" class="form-control" value="{{ user.skills or '' }}" />
+          <input name="skills" class="form-control" value="{{ user.skills or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
         <div class="col-12 col-md-6">
           <label class="form-label">GPA</label>
-          <input name="gpa" class="form-control" value="{{ user.gpa or '' }}" />
+          <input name="gpa" class="form-control" value="{{ user.gpa or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
         <div class="col-12">
           <label class="form-label">Activities</label>
-          <input name="activities" class="form-control" value="{{ user.activities or '' }}" />
+          <input name="activities" class="form-control" value="{{ user.activities or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
       </div>
-      <button class="btn btn-primary mt-4" type="submit">Save Changes</button>
+      <button class="btn btn-primary mt-4" type="submit" {% if user.survey_completed %}disabled{% endif %}>Save Changes</button>
     </form>
   </div>
 {% endblock %}

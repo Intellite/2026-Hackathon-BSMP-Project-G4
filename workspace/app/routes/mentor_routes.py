@@ -7,12 +7,15 @@ from app import db
 from app.models.conversation import Conversation, ConversationMessage
 from app.services.ai_service import AIService
 
+from app.utils.survey_gating import survey_required
+
 
 mentor_bp = Blueprint("mentor", __name__, url_prefix="/mentor")
 
 
 @mentor_bp.get("/")
 @login_required
+@survey_required
 def index() -> str:
     conversations = (
         Conversation.query.filter_by(user_id=current_user.id)
@@ -25,6 +28,7 @@ def index() -> str:
 
 @mentor_bp.post("/chat")
 @login_required
+@survey_required
 def chat() -> tuple[str, int] | tuple[dict, int]:
     payload = request.get_json(force=True)
     conversation_id = payload.get("conversation_id")

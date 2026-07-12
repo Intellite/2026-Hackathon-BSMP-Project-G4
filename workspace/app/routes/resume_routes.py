@@ -5,18 +5,22 @@ from flask_login import current_user, login_required
 
 from app.services.ai_service import AIService
 
+from app.utils.survey_gating import survey_required
+
 
 resume_bp = Blueprint("resume", __name__, url_prefix="/resume")
 
 
 @resume_bp.get("/")
 @login_required
+@survey_required
 def index() -> str:
     return render_template("dashboard/resume_analyzer.html")
 
 
 @resume_bp.post("/analyze")
 @login_required
+@survey_required
 def analyze() -> str:
     file = request.files.get("resume")
     if not file or not file.filename:

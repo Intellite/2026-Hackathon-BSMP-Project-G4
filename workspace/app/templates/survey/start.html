@@ -1,0 +1,32 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+  <div class="max-w-2xl mx-auto">
+    <div class="survey-card rounded-2xl border border-slate-800 bg-slate-950 shadow-sm p-6 text-white">
+      <div class="flex items-center justify-between gap-3">
+        <div class="text-sm text-slate-300">Survey</div>
+        <a href="{{ url_for('dashboard.index') }}" class="text-sm font-medium text-slate-200 hover:text-white">Menu</a>
+      </div>
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white">?</div>
+      <h1 class="text-2xl font-semibold mt-4">Take the survey to unlock features</h1>
+      <p class="text-slate-300 mt-2">
+        We’ll use your answers to personalize your Compass AI recommendations.
+      </p>
+
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <a href="{{ url_for('survey.step', step=0) }}" class="rounded-xl px-6 py-2.5 font-semibold text-center block theme-dark:bg-blue-600 theme-dark:text-white theme-light:bg-white theme-light:text-black border border-slate-800 hover:opacity-95">
+          Take survey
+        </a>
+        <a href="{{ url_for('dashboard.index') }}" class="rounded-xl px-6 py-2.5 font-semibold text-center block theme-dark:bg-blue-600 theme-dark:text-white theme-light:bg-white theme-light:text-black border border-slate-800 hover:opacity-95">
+          Return to dashboard
+        </a>
+      </div>
+
+      <p class="text-xs text-slate-400 mt-4">
+        You can retake the survey after you finish it.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

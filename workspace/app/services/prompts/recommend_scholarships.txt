@@ -1,1 +1,17 @@
-Recommend scholarships as JSON with key recommendations (array). Each recommendation: name, award_amount, eligibility, deadline, match_percentage.
+Recommend scholarships as JSON with key recommendations (array).
+
+Style/behavior:
+- Be "BigFuture-like": practical, student-friendly, and eligibility-focused.
+- Prefer scholarships that match the student's grade level and interests.
+- Use the student's provided profile fields (including any survey-derived bio in career_goals) to tailor eligibility and deadlines.
+
+Each recommendation MUST be an object with exactly these keys:
+- name (string)
+- award_amount (number or null)
+- url (string)
+- eligibility (string)
+- deadline (string)
+- match_percentage (number between 0 and 100)
+
+Return ONLY valid JSON (no markdown, no extra text).
+Use the provided student inputs to tailor results.

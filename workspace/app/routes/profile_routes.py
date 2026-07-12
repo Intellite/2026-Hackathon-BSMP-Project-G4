@@ -21,6 +21,11 @@ def index() -> str:
 def update() -> str:
     user: User = current_user  # type: ignore[assignment]
 
+    # If survey is completed, lock survey-derived fields.
+    if user.survey_completed:
+        flash("Survey answers are locked. You can retake the survey to change them.", "info")
+        return redirect(url_for("profile.index"))
+
     user.interests = request.form.get("interests", "")
     user.career_goals = request.form.get("career_goals", "")
     user.skills = request.form.get("skills", "")

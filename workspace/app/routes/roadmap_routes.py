@@ -5,18 +5,22 @@ from flask_login import current_user, login_required
 
 from app.services.ai_service import AIService
 
+from app.utils.survey_gating import survey_required
+
 
 roadmap_bp = Blueprint("roadmap", __name__, url_prefix="/roadmap")
 
 
 @roadmap_bp.get("/")
 @login_required
+@survey_required
 def index() -> str:
     return render_template("dashboard/roadmap.html")
 
 
 @roadmap_bp.post("/generate")
 @login_required
+@survey_required
 def generate() -> str:
     career_title = request.form.get("career_title", "")
     ai = AIService()

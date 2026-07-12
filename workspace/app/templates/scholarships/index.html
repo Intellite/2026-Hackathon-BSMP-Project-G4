@@ -5,12 +5,32 @@
     <a class="btn btn-outline-primary" href="{{ url_for('dashboard.index') }}">Back to Dashboard</a>
   </div>
 
+  <div class="card rounded-4 shadow-sm border-0 p-4 mb-3">
+    <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+      <div>
+        <div class="fw-bold">Profile-aware recommendations</div>
+        <div class="text-muted small">If AI is configured, Compass AI will generate tailored scholarship matches.</div>
+      </div>
+      <div class="d-flex gap-2">
+        <a class="btn btn-primary" href="{{ url_for('scholarships.index') }}">Refresh</a>
+      </div>
+    </div>
+  </div>
+
   <form method="get" class="row g-2 mb-3">
     <div class="col-12 col-md-6">
       <input name="q" class="form-control" placeholder="Search scholarships" value="{{ request.args.get('q','') }}" />
     </div>
     <div class="col-12 col-md-4">
-      <input name="tag" class="form-control" placeholder="Filter by tag" value="{{ request.args.get('tag','') }}" />
+      <select name="tag" class="form-select" aria-label="Filter by tag">
+        {% set current_tag = request.args.get('tag','') %}
+        <option value="" {% if not current_tag %}selected{% endif %}>All tags</option>
+        <option value="STEM" {% if current_tag == 'STEM' %}selected{% endif %}>STEM</option>
+        <option value="Leadership" {% if current_tag == 'Leadership' %}selected{% endif %}>Leadership</option>
+        <option value="Community" {% if current_tag == 'Community' %}selected{% endif %}>Community</option>
+        <option value="Arts" {% if current_tag == 'Arts' %}selected{% endif %}>Arts</option>
+        <option value="Healthcare" {% if current_tag == 'Healthcare' %}selected{% endif %}>Healthcare</option>
+      </select>
     </div>
     <div class="col-12 col-md-2">
       <button class="btn btn-primary w-100" type="submit">Filter</button>
@@ -25,13 +45,18 @@
           <div class="d-flex justify-content-between align-items-start gap-2">
             <div>
               <div class="fw-bold">{{ s.name }}</div>
+              {% if s.url %}
+                <a class="small" href="{{ s.url }}" target="_blank" rel="noopener">View details</a>
+              {% endif %}
               <div class="text-muted small">Deadline: {{ s.deadline or 'TBD' }}</div>
             </div>
             <div class="badge badge-accent">{{ item.match_percentage }}%</div>
           </div>
           <div class="mt-3">
             <div class="text-muted small">Award Amount</div>
-            <div class="fw-semibold">${{ s.award_amount or 0 }}</div>
+            <div class="fw-semibold">
+              {% if s.award_amount is none or s.award_amount == 0 %}Not Specified{% else %}${{ s.award_amount }}{% endif %}
+            </div>
           </div>
           <div class="mt-3">
             <div class="text-muted small">Eligibility</div>
