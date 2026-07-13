@@ -114,8 +114,10 @@ def seed() -> None:
         db.session.commit()
 
     # Example user + conversations
+    # Ensure we always create a valid user row (username is NOT NULL).
     if User.query.first() is None:
         user = User(
+            username="student",
             email="student@example.com",
             password_hash=generate_password_hash("password123"),
             name="Jordan Rivera",

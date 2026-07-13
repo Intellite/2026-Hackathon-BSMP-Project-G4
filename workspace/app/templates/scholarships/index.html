@@ -11,19 +11,14 @@
         <div class="fw-bold">Profile-aware recommendations</div>
         <div class="text-muted small">If AI is configured, Compass AI will generate tailored scholarship matches.</div>
       </div>
-      <div class="d-flex gap-2">
-        <a class="btn btn-primary" href="{{ url_for('scholarships.index') }}">Refresh</a>
-      </div>
+      <div></div>
     </div>
   </div>
 
   <form method="get" class="row g-2 mb-3">
-    <div class="col-12 col-md-6">
-      <input name="q" class="form-control" placeholder="Search scholarships" value="{{ request.args.get('q','') }}" />
-    </div>
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-3">
       <select name="tag" class="form-select" aria-label="Filter by tag">
-        {% set current_tag = request.args.get('tag','') %}
+        {% set current_tag = (filters.tag if filters is defined else request.args.get('tag','')) %}
         <option value="" {% if not current_tag %}selected{% endif %}>All tags</option>
         <option value="STEM" {% if current_tag == 'STEM' %}selected{% endif %}>STEM</option>
         <option value="Leadership" {% if current_tag == 'Leadership' %}selected{% endif %}>Leadership</option>
@@ -32,8 +27,57 @@
         <option value="Healthcare" {% if current_tag == 'Healthcare' %}selected{% endif %}>Healthcare</option>
       </select>
     </div>
+
+    <div class="col-12 col-md-3">
+      <select name="scholarship_type" class="form-select" aria-label="Scholarship type">
+        {% set current_type = (filters.scholarship_type if filters is defined else request.args.get('scholarship_type','')) %}
+        <option value="" {% if not current_type %}selected{% endif %}>Any type</option>
+        <option value="Merit-based" {% if current_type == 'Merit-based' %}selected{% endif %}>Merit-based</option>
+        <option value="Need-based" {% if current_type == 'Need-based' %}selected{% endif %}>Need-based</option>
+        <option value="Competition-based" {% if current_type == 'Competition-based' %}selected{% endif %}>Competition-based</option>
+        <option value="STEM/major-specific" {% if current_type == 'STEM/major-specific' %}selected{% endif %}>STEM/major-specific</option>
+        <option value="Community/service" {% if current_type == 'Community/service' %}selected{% endif %}>Community/service</option>
+        <option value="First-generation" {% if current_type == 'First-generation' %}selected{% endif %}>First-generation</option>
+        <option value="Athletics" {% if current_type == 'Athletics' %}selected{% endif %}>Athletics</option>
+        <option value="Career/industry program" {% if current_type == 'Career/industry program' %}selected{% endif %}>Career/industry program</option>
+        <option value="Other" {% if current_type == 'Other' %}selected{% endif %}>Other</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <select name="award_amount" class="form-select" aria-label="Award amount">
+        {% set current_award = (filters.award_amount if filters is defined else request.args.get('award_amount','')) %}
+        <option value="" {% if not current_award %}selected{% endif %}>Any amount</option>
+        <option value="Under $1,000" {% if current_award == 'Under $1,000' %}selected{% endif %}>Under $1,000</option>
+        <option value="$1,000–$4,999" {% if current_award == '$1,000–$4,999' %}selected{% endif %}>$1,000–$4,999</option>
+        <option value="$5,000–$9,999" {% if current_award == '$5,000–$9,999' %}selected{% endif %}>$5,000–$9,999</option>
+        <option value="$10,000–$24,999" {% if current_award == '$10,000–$24,999' %}selected{% endif %}>$10,000–$24,999</option>
+        <option value="$25,000+" {% if current_award == '$25,000+' %}selected{% endif %}>$25,000+</option>
+        <option value="Not sure yet" {% if current_award == 'Not sure yet' %}selected{% endif %}>Not sure yet</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <input
+        name="state"
+        class="form-control"
+        placeholder="e.g. NC"
+        value="{{ filters.state if filters is defined else request.args.get('state','') }}"
+        aria-label="State"
+      />
+    </div>
+
+    <div class="col-12 col-md-6">
+      <input
+        name="other_circumstances"
+        class="form-control"
+        placeholder="External circumstances (e.g., first-gen, caregiving, disability, major, etc.)"
+        value="{{ filters.other_circumstances if filters is defined else request.args.get('other_circumstances','') }}"
+      />
+    </div>
+
     <div class="col-12 col-md-2">
-      <button class="btn btn-primary w-100" type="submit">Filter</button>
+      <button class="btn btn-primary w-100" type="submit">Find matches</button>
     </div>
   </form>
 

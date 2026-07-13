@@ -14,6 +14,12 @@ body{
   background: var(--bg);
 }
 
+/* Slightly larger logo in navbar */
+.navbar-brand img{
+  width: 34px;
+  height: 34px;
+}
+
 .card{
   border-radius: 1rem;
 }
@@ -69,6 +75,11 @@ body{
   border: 1px dashed rgba(0,120,212,0.25);
 }
 
+.chart-placeholder--transparent {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
 .timeline{
   position: relative;
   margin-left: 10px;
@@ -118,4 +129,34 @@ body{
 .chat-user .chat-bubble{
   background: rgba(0,120,212,0.10);
   border-color: rgba(0,120,212,0.18);
+}
+
+/* Landing hero background (generic Getty Images-style) */
+.landing-hero{
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-hero__bg{
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(135deg, rgba(11,18,32,0.78), rgba(11,18,32,0.35)),
+    url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2400&q=80');
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05) contrast(1.02);
+  transform: scale(1.02);
+}
+
+/* Light theme: soften overlay */
+body.theme-light .landing-hero__bg{
+  background-image:
+    linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.55)),
+    url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2400&q=80');
+}
+
+.landing-hero .container{
+  position: relative;
+  z-index: 1;
 }

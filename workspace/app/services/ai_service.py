@@ -245,6 +245,41 @@ class AIService:
         except Exception:
             return {"roadmap": []}
 
+    def generate_college_matches(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Return AI-generated college matches as strict JSON."""
+        self._ensure_rate_limit()
+        prompt = self._load_prompt("generate_college_matches")
+
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
+            # Deterministic fallback (demo)
+            return {
+                "colleges": [
+                    {
+                        "name": "University of California, Berkeley",
+                        "state": "CA",
+                        "public_private": "Public",
+                        "tuition_estimate": "$15k-$18k/yr",
+                        "acceptable_rates": {
+                            "resident": "$15k-$18k/yr",
+                            "non_resident": "$35k-$40k/yr",
+                            "average": "$25k-$29k/yr",
+                        },
+                        "url": "https://www.berkeley.edu/",
+                        "match_score": 90,
+                    }
+                ]
+            }
+
+        messages = [
+            {"role": "system", "content": prompt or "You recommend colleges."},
+            {"role": "user", "content": json.dumps(payload)},
+        ]
+        text = self._with_retry(lambda: self._call_chat(messages))
+        try:
+            return json.loads(text)
+        except Exception:
+            return {"colleges": []}
+
     def analyze_skill_gaps(self, payload: dict[str, Any]) -> dict[str, Any]:
         self._ensure_rate_limit()
         prompt = self._load_prompt("analyze_skill_gaps")

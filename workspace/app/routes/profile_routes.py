@@ -29,8 +29,12 @@ def update() -> str:
     user.interests = request.form.get("interests", "")
     user.career_goals = request.form.get("career_goals", "")
     user.skills = request.form.get("skills", "")
-    user.gpa = float(request.form.get("gpa") or 0) if request.form.get("gpa") else None
     user.activities = request.form.get("activities", "")
+
+    user.award_amount = request.form.get("award_amount", "")
+    user.scholarship_category = request.form.get("scholarship_category", "")
+    user.state = request.form.get("state", "")
+    user.other_circumstances = request.form.get("other_circumstances", "")
 
     db.session.commit()
     flash("Profile updated.", "success")

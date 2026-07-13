@@ -30,7 +30,7 @@
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <div>
       <h2 class="h4 fw-bold">Welcome, {{ current_user.name }} 👋</h2>
-      <p class="text-muted small mb-0">Here’s your personalized snapshot for today.</p>
+      <p class="text-muted small mb-0">Here’s your  snapshot for today.</p>
     </div>
   </div>
 
@@ -47,7 +47,7 @@
     <div class="col-12 col-lg-4">
       <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(25,135,84,0.25);">
         <div class="text-muted small">Scholarship Opportunities</div>
-        <div class="fw-bold fs-4">{{ scholarships|length }}</div>
+        <div class="fw-bold fs-4">Scholarships</div>
         <div class="mt-3">
           {% for s in scholarships %}
             <div class="d-flex justify-content-between align-items-center mb-2">

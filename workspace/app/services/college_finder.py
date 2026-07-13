@@ -10,6 +10,7 @@ class CollegeResult:
     state: str
     public_private: str
     tuition_estimate: str
+    acceptable_rates: dict[str, str]
     url: str
     match_score: int
 
@@ -34,6 +35,11 @@ def search_colleges(
             state="CA",
             public_private="Public",
             tuition_estimate="$15k-$18k/yr",
+            acceptable_rates={
+                "resident": "$15k-$18k/yr",
+                "non_resident": "$35k-$40k/yr",
+                "average": "$25k-$29k/yr",
+            },
             url="https://www.berkeley.edu/",
             match_score=92,
         ),
@@ -42,6 +48,11 @@ def search_colleges(
             state="MI",
             public_private="Public",
             tuition_estimate="$14k-$17k/yr",
+            acceptable_rates={
+                "resident": "$14k-$17k/yr",
+                "non_resident": "$33k-$38k/yr",
+                "average": "$24k-$28k/yr",
+            },
             url="https://umich.edu/",
             match_score=86,
         ),
@@ -50,6 +61,11 @@ def search_colleges(
             state="TX",
             public_private="Public",
             tuition_estimate="$12k-$16k/yr",
+            acceptable_rates={
+                "resident": "$12k-$16k/yr",
+                "non_resident": "$30k-$36k/yr",
+                "average": "$21k-$26k/yr",
+            },
             url="https://www.utexas.edu/",
             match_score=84,
         ),
@@ -58,6 +74,11 @@ def search_colleges(
             state="MA",
             public_private="Private",
             tuition_estimate="$55k-$60k/yr",
+            acceptable_rates={
+                "resident": "$55k-$60k/yr",
+                "non_resident": "$55k-$60k/yr",
+                "average": "$55k-$60k/yr",
+            },
             url="https://www.northeastern.edu/",
             match_score=78,
         ),
@@ -66,6 +87,11 @@ def search_colleges(
             state="NC",
             public_private="Private",
             tuition_estimate="$60k-$65k/yr",
+            acceptable_rates={
+                "resident": "$60k-$65k/yr",
+                "non_resident": "$60k-$65k/yr",
+                "average": "$60k-$65k/yr",
+            },
             url="https://www.duke.edu/",
             match_score=74,
         ),
@@ -74,6 +100,11 @@ def search_colleges(
             state="WA",
             public_private="Public",
             tuition_estimate="$14k-$18k/yr",
+            acceptable_rates={
+                "resident": "$14k-$18k/yr",
+                "non_resident": "$32k-$38k/yr",
+                "average": "$23k-$28k/yr",
+            },
             url="https://www.washington.edu/",
             match_score=80,
         ),
@@ -116,6 +147,7 @@ def search_colleges(
             "state": c.state,
             "public_private": c.public_private,
             "tuition_estimate": c.tuition_estimate,
+            "acceptable_rates": c.acceptable_rates,
             "url": c.url,
             "match_score": c.match_score,
         }

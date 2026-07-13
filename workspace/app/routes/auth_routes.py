@@ -28,7 +28,7 @@ def login_post() -> str:
         return render_template("auth/login.html", form=form)
 
     user = db.session.execute(
-        db.select(User).where(User.email == form.email.data)
+        db.select(User).where(User.username == form.username.data)
     ).scalar_one_or_none()
 
     if user is None or not check_password_hash(user.password_hash, form.password.data):

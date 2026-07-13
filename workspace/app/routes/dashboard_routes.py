@@ -5,6 +5,7 @@ from flask_login import current_user, login_required
 
 from app.models.career import Career
 from app.models.scholarship import Scholarship
+import json
 
 
 
@@ -26,10 +27,23 @@ def index() -> str:
         {"skill": "Internship Experience", "percent": 20},
     ]
 
-    # Provide real scholarship entries for the dashboard cards.
+    # Prefer the latest AI-generated scholarship cards (persisted after /scholarships API call).
     scholarship_cards = []
-    for s in scholarships:
-        scholarship_cards.append({"scholarship": s, "match_percentage": 60})
+    if getattr(current_user, "is_authenticated", False) and hasattr(current_user, "dashboard_scholarships_json"):
+        try:
+            raw = getattr(current_user, "dashboard_scholarships_json")
+            if raw:
+                parsed = json.loads(raw)
+                if isinstance(parsed, list) and parsed:
+                    scholarship_cards = parsed[:6]
+        except Exception:
+            scholarship_cards = []
+
+    # Fallback to prototype DB scholarships.
+    if not scholarship_cards:
+        scholarship_cards = [
+            {"scholarship": s, "match_percentage": 60} for s in scholarships[:6]
+        ]
 
     return render_template(
         "dashboard/index.html",

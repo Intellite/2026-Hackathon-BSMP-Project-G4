@@ -12,19 +12,15 @@
       <p class="text-slate-300 mt-2">Select one option to continue.</p>
 
       <form method="post" class="mt-6 space-y-4">
-      {% if question.type == 'gpa' %}
+      {% if question.type == 'other_text' %}
         <div>
-          <label class="block text-sm font-medium text-slate-200">GPA</label>
-          <input
-            type="number"
+          <label class="block text-sm font-medium text-slate-200">Your answer</label>
+          <textarea
             name="choice"
-            step="0.01"
-            min="0"
-            max="4.0"
-            value="{{ selected if selected is not none else '' }}"
+            rows="4"
             class="mt-1 w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white"
-            placeholder="e.g., 3.5"
-          />
+            placeholder="Add any details that could help us recommend scholarships (optional but recommended)."
+          >{{ selected if selected is not none else '' }}</textarea>
         </div>
       {% else %}
         <div class="grid gap-3">

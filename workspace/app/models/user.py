@@ -27,9 +27,17 @@ class User(db.Model, UserMixin):
     # Simple profile fields for prototype
     skills = db.Column(String(500), nullable=True)  # comma-separated
     activities = db.Column(String(500), nullable=True)  # comma-separated
-    gpa = db.Column(db.Float, nullable=True)
+
+    # Scholarship preference tags
+    award_amount = db.Column(String(120), nullable=True)
+    scholarship_category = db.Column(String(120), nullable=True)
+    state = db.Column(String(120), nullable=True)
+    other_circumstances = db.Column(String(500), nullable=True)
 
     survey_completed = db.Column(db.Boolean, nullable=False, default=False)
+
+    # Admin authorization (prototype)
+    is_admin = db.Column(db.Boolean, nullable=False, default=False, index=True)
 
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 

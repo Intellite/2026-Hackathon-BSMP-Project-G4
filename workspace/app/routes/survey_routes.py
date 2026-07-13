@@ -144,10 +144,94 @@ SURVEY_QUESTIONS: list[dict[str, Any]] = [
         "multi": True,
     },
     {
+        "id": "award_amount",
+        "prompt": "What award amount are you aiming for?",
+        "options": [
+            "Under $1,000",
+            "$1,000–$4,999",
+            "$5,000–$9,999",
+            "$10,000–$24,999",
+            "$25,000+",
+            "Not sure yet",
+        ],
+    },
+    {
+        "id": "scholarship_category",
+        "prompt": "What type of scholarship are you most interested in?",
+        "options": [
+            "Merit-based",
+            "Need-based",
+            "Competition-based",
+            "STEM/major-specific",
+            "Community/service",
+            "First-generation",
+            "Athletics",
+            "Career/industry program",
+            "Other",
+        ],
+    },
+    {
+        "id": "state",
+        "prompt": "Which state are you in?",
+        "options": [
+            "Alabama",
+            "Alaska",
+            "Arizona",
+            "Arkansas",
+            "California",
+            "Colorado",
+            "Connecticut",
+            "Delaware",
+            "Florida",
+            "Georgia",
+            "Hawaii",
+            "Idaho",
+            "Illinois",
+            "Indiana",
+            "Iowa",
+            "Kansas",
+            "Kentucky",
+            "Louisiana",
+            "Maine",
+            "Maryland",
+            "Massachusetts",
+            "Michigan",
+            "Minnesota",
+            "Mississippi",
+            "Missouri",
+            "Montana",
+            "Nebraska",
+            "Nevada",
+            "New Hampshire",
+            "New Jersey",
+            "New Mexico",
+            "New York",
+            "North Carolina",
+            "North Dakota",
+            "Ohio",
+            "Oklahoma",
+            "Oregon",
+            "Pennsylvania",
+            "Rhode Island",
+            "South Carolina",
+            "South Dakota",
+            "Tennessee",
+            "Texas",
+            "Utah",
+            "Vermont",
+            "Virginia",
+            "Washington",
+            "West Virginia",
+            "Wisconsin",
+            "Wyoming",
+            "Other / Prefer not to say",
+        ],
+    },
+    {
         "id": "gpa",
         "prompt": "What is your current GPA?",
         "options": [],
-        "type": "gpa",
+        "type": "other_text",
     },
 ]
 
@@ -216,10 +300,10 @@ def step_post(step: int) -> str:
     answers = _load_answers(resp)
 
     q = SURVEY_QUESTIONS[step]
-    if q.get("type") == "gpa":
+    if q.get("type") == "other_text":
         choice = request.form.get("choice", "").strip()
         if not choice:
-            flash("Please enter your GPA.", "warning")
+            flash("Please enter a short note.", "warning")
             return redirect(url_for("survey.step", step=step))
         answers[q["id"]] = choice
     elif q.get("multi"):
@@ -266,11 +350,17 @@ def finish() -> str:
         current_user.skills = answers["skills"]
     if "activities" in answers:
         current_user.activities = answers["activities"]
+    if "award_amount" in answers:
+        current_user.award_amount = answers["award_amount"]
+    if "scholarship_category" in answers:
+        current_user.scholarship_category = answers["scholarship_category"]
+    if "state" in answers:
+        current_user.state = answers["state"]
     if "gpa" in answers:
-        try:
-            current_user.gpa = float(answers["gpa"])
-        except Exception:
-            pass
+        # User model may not have a dedicated GPA column in older prototype data.
+        # Store it if present; otherwise ignore.
+        if hasattr(current_user, "gpa"):
+            current_user.gpa = answers["gpa"]
     db.session.commit()
 
     return render_template("survey/finish.html")

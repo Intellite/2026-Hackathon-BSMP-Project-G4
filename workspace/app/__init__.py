@@ -59,6 +59,7 @@ def create_app() -> Flask:
     from app.routes.college_routes import college_bp
     from app.routes.profile_routes import profile_bp
     from app.routes.settings_routes import settings_bp
+    from app.routes.admin_routes import admin_bp
 
     app.register_blueprint(home_bp)
     app.register_blueprint(auth_bp)
@@ -73,12 +74,21 @@ def create_app() -> Flask:
     app.register_blueprint(college_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(settings_bp)
+    app.register_blueprint(admin_bp)
 
     # Create tables
     with app.app_context():
         from app.models import user, career, scholarship, conversation
 
         db.create_all()
+
+        # SQLite schema evolution without Alembic migrations.
+        try:
+            from app.utils.migrate_user_columns import migrate_user_columns
+
+            migrate_user_columns()
+        except Exception as e:  # noqa: BLE001
+            logging.getLogger(__name__).warning("User column migration skipped: %s", e)
 
         # Seed demo data (hackathon)
         try:

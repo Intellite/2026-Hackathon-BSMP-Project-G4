@@ -61,7 +61,7 @@ def chat() -> tuple[str, int] | tuple[dict, int]:
                 "career_goals": current_user.career_goals,
                 "skills": current_user.skills,
                 "activities": current_user.activities,
-                "gpa": current_user.gpa,
+                "gpa": getattr(current_user, "gpa", None),
             },
             "message": message,
         }

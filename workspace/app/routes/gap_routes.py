@@ -30,7 +30,7 @@ def analyze() -> str:
                 "interests": current_user.interests,
                 "skills": current_user.skills,
                 "activities": current_user.activities,
-                "gpa": current_user.gpa,
+                "gpa": getattr(current_user, "gpa", None),
                 "grade_level": current_user.grade_level,
             },
             "target_career": target_career,

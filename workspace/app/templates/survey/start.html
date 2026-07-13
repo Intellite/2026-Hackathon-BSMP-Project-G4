@@ -3,30 +3,48 @@
 {% block content %}
 <div class="container mx-auto px-4 py-10">
   <div class="max-w-2xl mx-auto">
-    <div class="survey-card rounded-2xl border border-slate-800 bg-slate-950 shadow-sm p-6 text-white">
+    <div class="survey-card rounded-2xl border border-slate-800 bg-slate-950 shadow-sm p-6 text-white theme-light:bg-white theme-light:text-slate-900">
       <div class="flex items-center justify-between gap-3">
-        <div class="text-sm text-slate-300">Survey</div>
-        <a href="{{ url_for('dashboard.index') }}" class="text-sm font-medium text-slate-200 hover:text-white">Menu</a>
-      </div>
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white">?</div>
-      <h1 class="text-2xl font-semibold mt-4">Take the survey to unlock features</h1>
-      <p class="text-slate-300 mt-2">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white"></div>
+      <h1 class="text-2xl font-semibold mt-4" style="color: #e2e8f0;" data-theme-light-color="#0f172a">Take the survey to unlock features</h1>
+      <p class="text-slate-300 mt-2" style="color: rgba(226,232,240,.75);" data-theme-light-color="#334155">
         We’ll use your answers to personalize your Compass AI recommendations.
       </p>
 
-      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <a href="{{ url_for('survey.step', step=0) }}" class="rounded-xl px-6 py-2.5 font-semibold text-center block theme-dark:bg-blue-600 theme-dark:text-white theme-light:bg-white theme-light:text-black border border-slate-800 hover:opacity-95">
+      <div class="mt-6 row g-3">
+        <div class="col-12 col-sm-6">
+        <a href="{{ url_for('survey.step', step=0) }}" class="btn btn-primary w-100 rounded-3 py-2.5 font-semibold" style="border:none;">
           Take survey
         </a>
-        <a href="{{ url_for('dashboard.index') }}" class="rounded-xl px-6 py-2.5 font-semibold text-center block theme-dark:bg-blue-600 theme-dark:text-white theme-light:bg-white theme-light:text-black border border-slate-800 hover:opacity-95">
-          Return to dashboard
+        </div>
+        <div class="col-12 col-sm-6">
+        <a href="{{ url_for('survey.retake') }}" class="btn btn-primary w-100 rounded-3 py-2.5 font-semibold" style="border:none;">
+          Retake survey
         </a>
+        </div>
       </div>
 
-      <p class="text-xs text-slate-400 mt-4">
+      <p class="text-xs text-slate-400 mt-4" style="color: rgba(148,163,184,.9);" data-theme-light-color="#64748b">
         You can retake the survey after you finish it.
       </p>
     </div>
   </div>
 </div>
+
+<script>
+  (function () {
+    const body = document.body;
+    const apply = () => {
+      const isLight = body.classList.contains('theme-light');
+      document.querySelectorAll('[data-theme-light-color]').forEach((el) => {
+        const lightColor = el.getAttribute('data-theme-light-color');
+        if (!lightColor) return;
+        if (isLight) el.style.color = lightColor;
+      });
+    };
+    apply();
+    window.addEventListener('storage', apply);
+    window.addEventListener('click', apply);
+  })();
+</script>
 {% endblock %}
