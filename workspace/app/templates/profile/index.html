@@ -6,6 +6,11 @@
   </div>
 
   <div class="card rounded-4 shadow-sm border-0 p-4">
+    <div class="mb-3">
+      <div class="text-muted small">Username</div>
+      <div class="fw-semibold">{{ user.username or user.name }}</div>
+    </div>
+
     <form method="post" action="{{ url_for('profile.update') }}">
       <div class="row g-3">
         <div class="col-12 col-md-6">
@@ -13,8 +18,8 @@
           <input name="interests" class="form-control" value="{{ user.interests or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
         <div class="col-12 col-md-6">
-          <label class="form-label">Career Goals</label>
-          <input name="career_goals" class="form-control" value="{{ user.career_goals or '' }}" {% if user.survey_completed %}disabled{% endif %} />
+          <label class="form-label">GPA</label>
+          <input name="gpa" class="form-control" value="{{ user.gpa or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
         <div class="col-12 col-md-6">
           <label class="form-label">Skills</label>
@@ -25,24 +30,9 @@
           <input name="activities" class="form-control" value="{{ user.activities or '' }}" {% if user.survey_completed %}disabled{% endif %} />
         </div>
 
-        <div class="col-12 col-md-6">
-          <label class="form-label">Award Amount</label>
-          <input name="award_amount" class="form-control" value="{{ user.award_amount or '' }}" {% if user.survey_completed %}disabled{% endif %} />
-        </div>
-        <div class="col-12 col-md-6">
-          <label class="form-label">Scholarship Category</label>
-          <input name="scholarship_category" class="form-control" value="{{ user.scholarship_category or '' }}" {% if user.survey_completed %}disabled{% endif %} />
-        </div>
-        <div class="col-12 col-md-6">
-          <label class="form-label">State</label>
-          <input name="state" class="form-control" value="{{ user.state or '' }}" {% if user.survey_completed %}disabled{% endif %} />
-        </div>
-        <div class="col-12">
-          <label class="form-label">Other Circumstances</label>
-          <textarea name="other_circumstances" class="form-control" rows="3" {% if user.survey_completed %}disabled{% endif %}>{{ user.other_circumstances or '' }}</textarea>
-        </div>
+        {# Removed award_amount / scholarship_category / state fields (questions 7-9) #}
+        {# Removed Other Circumstances section #}
       </div>
-      <button class="btn btn-primary mt-4" type="submit" {% if user.survey_completed %}disabled{% endif %}>Save Changes</button>
     </form>
   </div>
 {% endblock %}

@@ -144,90 +144,6 @@ SURVEY_QUESTIONS: list[dict[str, Any]] = [
         "multi": True,
     },
     {
-        "id": "award_amount",
-        "prompt": "What award amount are you aiming for?",
-        "options": [
-            "Under $1,000",
-            "$1,000–$4,999",
-            "$5,000–$9,999",
-            "$10,000–$24,999",
-            "$25,000+",
-            "Not sure yet",
-        ],
-    },
-    {
-        "id": "scholarship_category",
-        "prompt": "What type of scholarship are you most interested in?",
-        "options": [
-            "Merit-based",
-            "Need-based",
-            "Competition-based",
-            "STEM/major-specific",
-            "Community/service",
-            "First-generation",
-            "Athletics",
-            "Career/industry program",
-            "Other",
-        ],
-    },
-    {
-        "id": "state",
-        "prompt": "Which state are you in?",
-        "options": [
-            "Alabama",
-            "Alaska",
-            "Arizona",
-            "Arkansas",
-            "California",
-            "Colorado",
-            "Connecticut",
-            "Delaware",
-            "Florida",
-            "Georgia",
-            "Hawaii",
-            "Idaho",
-            "Illinois",
-            "Indiana",
-            "Iowa",
-            "Kansas",
-            "Kentucky",
-            "Louisiana",
-            "Maine",
-            "Maryland",
-            "Massachusetts",
-            "Michigan",
-            "Minnesota",
-            "Mississippi",
-            "Missouri",
-            "Montana",
-            "Nebraska",
-            "Nevada",
-            "New Hampshire",
-            "New Jersey",
-            "New Mexico",
-            "New York",
-            "North Carolina",
-            "North Dakota",
-            "Ohio",
-            "Oklahoma",
-            "Oregon",
-            "Pennsylvania",
-            "Rhode Island",
-            "South Carolina",
-            "South Dakota",
-            "Tennessee",
-            "Texas",
-            "Utah",
-            "Vermont",
-            "Virginia",
-            "Washington",
-            "West Virginia",
-            "Wisconsin",
-            "Wyoming",
-            "Other / Prefer not to say",
-        ],
-    },
-    {
         "id": "gpa",
         "prompt": "What is your current GPA?",
         "options": [],
@@ -258,7 +174,7 @@ def _load_answers(resp: SurveyResponse) -> dict[str, Any]:
 @login_required
 def start() -> str:
     if getattr(current_user, "survey_completed", False):
-        return redirect(url_for("dashboard.index"))
+        return redirect(url_for("survey.retake"))
 
     return render_template("survey/start.html")
 
@@ -267,7 +183,7 @@ def start() -> str:
 @login_required
 def step(step: int) -> str:
     if getattr(current_user, "survey_completed", False):
-        return redirect(url_for("dashboard.index"))
+        return redirect(url_for("survey.retake"))
 
     if step < 0 or step >= len(SURVEY_QUESTIONS):
         return redirect(url_for("survey.finish"))
@@ -291,7 +207,7 @@ def step(step: int) -> str:
 @login_required
 def step_post(step: int) -> str:
     if getattr(current_user, "survey_completed", False):
-        return redirect(url_for("dashboard.index"))
+        return redirect(url_for("survey.retake"))
 
     if step < 0 or step >= len(SURVEY_QUESTIONS):
         return redirect(url_for("survey.finish"))
@@ -332,7 +248,7 @@ def step_post(step: int) -> str:
 @login_required
 def finish() -> str:
     if getattr(current_user, "survey_completed", False):
-        return redirect(url_for("dashboard.index"))
+        return redirect(url_for("survey.retake"))
 
     resp = _get_or_create_response()
     resp.completed = True
