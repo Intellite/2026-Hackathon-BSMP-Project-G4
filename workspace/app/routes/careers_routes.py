@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request
 from flask_login import current_user, login_required
 
 from app.utils.survey_gating import survey_required
+from app.services.ai_service import AIService
 
 
 careers_bp = Blueprint("careers", __name__, url_prefix="/careers")
@@ -25,11 +26,28 @@ def generate() -> str:
     activities = request.form.get("activities", "")
     skills = request.form.get("skills", "")
 
-    # Career match generation removed (redundant after first use).
-    # Keep the endpoint so the UI flow still works.
+    ai = AIService()
+    result = ai.generate_career_matches(
+        {
+            "interests": interests,
+            "subjects": subjects,
+            "activities": activities,
+            "skills": skills,
+            "student_profile": current_user.name,
+            "grade_level": current_user.grade_level,
+        }
+    )
+
+    return render_template("careers/results.html", result=result)
+
+
+@careers_bp.get("/results")
+@login_required
+@survey_required
+def results() -> str:
+    # Simple fallback so the UI can navigate directly to /careers/results.
     result = {
         "careers": [],
-        "message": "Career generation is currently disabled. Please use the dashboard and scholarship pages instead."
+        "message": "No results yet. Submit the form on the Career Explorer page to generate recommendations."
     }
-
     return render_template("careers/results.html", result=result)

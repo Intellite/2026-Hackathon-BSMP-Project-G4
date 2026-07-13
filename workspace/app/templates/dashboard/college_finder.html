@@ -1,0 +1,67 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+  <div class="row g-3">
+    <div class="col-12 col-lg-5">
+      <div class="card rounded-4 shadow-sm border-0 p-4">
+        <h2 class="h5 fw-bold">College Finder</h2>
+        <p class="text-muted small">Discover colleges by tuition, state, and public/private.</p>
+
+        <form method="post" action="{{ url_for('college.search') }}" class="mt-3">
+          <div class="mb-3">
+            <label class="form-label">Max tuition</label>
+            <input name="tuition" class="form-control" placeholder="e.g., 20000" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">State</label>
+            <input name="state" class="form-control" placeholder="e.g., CA" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Public / Private</label>
+            <select name="public_private" class="form-select">
+              <option value="any" selected>Any</option>
+              <option value="Public">Public</option>
+              <option value="Private">Private</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Major</label>
+            <input name="major" class="form-control" placeholder="e.g., Computer Science" />
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit">Search Colleges</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+      <div class="card rounded-4 shadow-sm border-0 p-4">
+        <h3 class="h6 fw-bold">Results</h3>
+
+        {% if results and results|length > 0 %}
+          <div class="row g-3 mt-1">
+            {% for c in results %}
+              <div class="col-12">
+                <div class="card rounded-4 border-0 p-3" style="background: rgba(148,163,184,.08);">
+                  <div class="d-flex align-items-start justify-content-between gap-3">
+                    <div>
+                      <div class="fw-bold">{{ c.name }}</div>
+                      <div class="text-muted small">{{ c.state }} • {{ c.public_private }}</div>
+                      <div class="text-muted small">Tuition: {{ c.tuition_estimate }}</div>
+                      <div class="small mt-1"><span class="fw-semibold">Match:</span> {{ c.match_score }}%</div>
+                    </div>
+                    <a class="btn btn-outline-primary" href="{{ c.url }}" target="_blank" rel="noopener">Visit</a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted small mt-3 mb-0">Run a search to see college matches.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

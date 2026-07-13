@@ -56,6 +56,7 @@ def create_app() -> Flask:
     from app.routes.scholarships_routes import scholarships_bp
     from app.routes.mentor_routes import mentor_bp
     from app.routes.resume_routes import resume_bp
+    from app.routes.college_routes import college_bp
     from app.routes.profile_routes import profile_bp
     from app.routes.settings_routes import settings_bp
 
@@ -69,6 +70,7 @@ def create_app() -> Flask:
     app.register_blueprint(scholarships_bp)
     app.register_blueprint(mentor_bp)
     app.register_blueprint(resume_bp)
+    app.register_blueprint(college_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(settings_bp)
 

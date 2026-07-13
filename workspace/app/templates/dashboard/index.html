@@ -1,28 +1,51 @@
 {% extends 'layout/base.html' %}
 {% block content %}
+  <style>
+    .dashboard-card {
+      transition: transform 160ms ease, box-shadow 160ms ease;
+      will-change: transform;
+      box-shadow: none !important;
+    }
+    .dashboard-card:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: var(--hover-shadow) !important;
+    }
+
+    .dashboard-btn {
+      border-color: #0d6efd !important;
+      color: #0d6efd !important;
+      background: transparent !important;
+      transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+    .dashboard-btn:hover {
+      background: #0d6efd !important;
+      color: #fff !important;
+      border-color: #0d6efd !important;
+    }
+
+    .dashboard-card {
+      border: 1px solid rgba(148,163,184,.35) !important;
+    }
+  </style>
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <div>
       <h2 class="h4 fw-bold">Welcome, {{ current_user.name }} 👋</h2>
       <p class="text-muted small mb-0">Here’s your personalized snapshot for today.</p>
     </div>
-    <div class="d-flex gap-2">
-      <a class="btn btn-outline-primary" href="{{ url_for('mentor.index') }}">Ask the Mentor</a>
-      <a class="btn btn-primary" href="{{ url_for('careers.index') }}">Explore Careers</a>
-    </div>
   </div>
 
   <div class="row g-3">
     <div class="col-12 col-lg-4">
-      <div class="card rounded-4 shadow-sm border-0 p-4">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(13,110,253,0.25);">
         <div class="text-muted small">Your next best steps</div>
         <div class="fw-bold fs-4 mt-1">Explore careers & scholarships</div>
         <div class="text-muted small mt-2">Use the menu to generate tailored results from your survey answers.</div>
-        <a class="btn btn-sm btn-primary w-100 mt-3" href="{{ url_for('careers.index') }}">Explore Careers</a>
+        <a class="btn btn-sm dashboard-btn w-100 mt-3" href="{{ url_for('careers.index') }}">Explore Careers</a>
       </div>
     </div>
 
     <div class="col-12 col-lg-4">
-      <div class="card rounded-4 shadow-sm border-0 p-4">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(25,135,84,0.25);">
         <div class="text-muted small">Scholarship Opportunities</div>
         <div class="fw-bold fs-4">{{ scholarships|length }}</div>
         <div class="mt-3">
@@ -33,27 +56,63 @@
             </div>
           {% endfor %}
         </div>
-        <a class="btn btn-sm btn-primary w-100 mt-3" href="{{ url_for('scholarships.index') }}">View Scholarships</a>
+        <a class="btn btn-sm dashboard-btn w-100 mt-3" href="{{ url_for('scholarships.index') }}">View Scholarships</a>
       </div>
     </div>
 
     <div class="col-12 col-lg-4">
-      <div class="card rounded-4 shadow-sm border-0 p-4">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(13,202,240,0.25);">
         <div class="text-muted small">AI Mentor Quick Access</div>
         <div class="fw-bold fs-5 mt-1">Get guidance in seconds</div>
         <p class="text-muted small mt-2">Ask about careers, college, interviews, or resumes.</p>
-        <a class="btn btn-outline-primary w-100 mt-3" href="{{ url_for('mentor.index') }}">Open Mentor</a>
+        <a class="btn btn-outline-primary dashboard-btn w-100 mt-3" href="{{ url_for('mentor.index') }}">Open Mentor</a>
       </div>
     </div>
 
-    <div class="col-12">
-      <div class="card rounded-4 shadow-sm border-0 p-4">
+    <div class="col-12 col-lg-4">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(255,193,7,0.35);">
+        <div class="text-muted small">Career Roadmap</div>
+        <div class="fw-bold fs-5 mt-1">Plan your next steps</div>
+        <p class="text-muted small mt-2">Generate a personalized roadmap for your target career.</p>
+        <a class="btn btn-primary dashboard-btn w-100 mt-3" href="{{ url_for('roadmap.index') }}">Open Roadmap</a>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(220,53,69,0.30);">
+        <div class="text-muted small">Resume Analyzer</div>
+        <div class="fw-bold fs-5 mt-1">Get actionable feedback</div>
+        <p class="text-muted small mt-2">Upload your resume to receive improvements and skill gap insights.</p>
+        <a class="btn btn-outline-primary dashboard-btn w-100 mt-3" href="{{ url_for('resume.index') }}">Analyze Resume</a>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(108,117,125,0.25);">
+        <div class="text-muted small">Survey</div>
+        <div class="fw-bold fs-5 mt-1">Tell us what you need</div>
+        <p class="text-muted small mt-2">Complete the survey to unlock personalized results.</p>
+        <a class="btn btn-outline-primary dashboard-btn w-100 mt-3" href="{{ url_for('survey.start') }}">Start Survey</a>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(0,123,255,0.25);">
+        <div class="text-muted small">College Finder</div>
+        <div class="fw-bold fs-5 mt-1">Find the right fit</div>
+        <p class="text-muted small mt-2">Search colleges by tuition, state, and public/private.</p>
+        <a class="btn btn-outline-primary dashboard-btn w-100 mt-3" href="{{ url_for('college.index') }}">Open Finder</a>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-8">
+      <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(0,0,0,0.18);">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
           <div>
             <div class="text-muted small">Skill Gap Summary</div>
             <div class="fw-bold fs-5">Your next best steps</div>
           </div>
-          <a class="btn btn-sm btn-primary" href="{{ url_for('gap.index') }}">Run Gap Detector</a>
+          <a class="btn btn-sm dashboard-btn" href="{{ url_for('gap.index') }}">Run Gap Detector</a>
         </div>
 
         <div class="mt-3">
