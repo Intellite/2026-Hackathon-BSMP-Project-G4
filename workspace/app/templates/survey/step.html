@@ -15,6 +15,7 @@
       </p>
 
       <form method="post" class="mt-6 space-y-4">
+<<<<<<< HEAD
         {% if question.type == 'other_text' %}
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">
@@ -75,6 +76,57 @@
             Next
           </button>
         </div>
+=======
+      {% if question.type == 'other_text' %}
+        <div>
+          <label class="block text-sm font-medium text-slate-200">Your answer</label>
+          <textarea
+            name="choice"
+            rows="4"
+            class="mt-1 w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white"
+            placeholder="Add any details that could help us recommend scholarships (optional but recommended)."
+          >{{ selected if selected is not none else '' }}</textarea>
+        </div>
+      {% else %}
+        <div class="grid gap-3">
+          {% if question.multi %}
+            {% set selected_list = selected if selected is iterable else [] %}
+            {% for opt in question.options %}
+              <label class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900 p-4 hover:border-blue-500 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="choice_multi"
+                  value="{{ opt }}"
+                  class="h-4 w-4"
+                  {% if opt in selected_list %}checked{% endif %}
+                />
+                <span class="text-white" style="color: #ffffff !important;" data-theme-light-color="#000000">{{ opt }}</span>
+              </label>
+            {% endfor %}
+          {% else %}
+            {% for opt in question.options %}
+              <label class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900 p-4 hover:border-blue-500 cursor-pointer">
+                <input
+                  type="radio"
+                  name="choice"
+                  value="{{ opt }}"
+                  class="h-4 w-4"
+                  {% if selected == opt %}checked{% endif %}
+                />
+                <span class="text-white" style="color: #ffffff !important;" data-theme-light-color="#000000">{{ opt }}</span>
+              </label>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="flex items-center justify-between pt-2">
+        <a href="{{ url_for('survey.start') }}" class="text-slate-300 hover:text-white">Back</a>
+        <button type="submit" class="rounded-xl bg-transparent border border-blue-600/60 px-6 py-3 font-semibold text-base hover:bg-blue-600/10 hover:border-blue-600" style="color: #e0f2fe !important;" data-theme-light-color="#000000">
+          Next
+        </button>
+      </div>
+>>>>>>> ee56e33 (first test proto)
       </form>
 
       <script>

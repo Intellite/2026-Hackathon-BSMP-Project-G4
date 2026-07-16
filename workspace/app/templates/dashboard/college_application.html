@@ -4,16 +4,24 @@
     <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
       <div>
         <h2 class="h5 fw-bold mb-1">{{ college.name }}</h2>
+<<<<<<< HEAD
         <div class="text-muted small">{{ college.state }} • {{ college.public_private }}</div>
+=======
+        <div class="text-muted small">{{ college.state }} • {{ college.public_private }} • Match {{ college.match_score }}%</div>
+>>>>>>> ee56e33 (first test proto)
         <div class="text-muted small mt-1">Application deadline: {{ college.application_deadline }}</div>
       </div>
       <div class="d-flex gap-2 flex-wrap">
         {% if college.application_url %}
           <a class="btn btn-primary" href="{{ college.application_url }}" target="_blank" rel="noopener">Open Official Application</a>
         {% endif %}
+<<<<<<< HEAD
         {% if college.website_url or college.url %}
           <a class="btn btn-outline-primary" href="{{ college.website_url or college.url }}" target="_blank" rel="noopener">College Website</a>
         {% endif %}
+=======
+        <a class="btn btn-outline-primary" href="{{ college.url }}" target="_blank" rel="noopener">College Website</a>
+>>>>>>> ee56e33 (first test proto)
         <a class="btn btn-outline-primary" href="{{ url_for('college.applications') }}">All Applications</a>
       </div>
     </div>

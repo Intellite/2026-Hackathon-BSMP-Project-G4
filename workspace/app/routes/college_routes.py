@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+<<<<<<< HEAD
 import json
+=======
+from flask import Blueprint, render_template, request
+from flask_login import login_required
+>>>>>>> ee56e33 (first test proto)
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
@@ -115,6 +120,7 @@ def _enrich_college(college: dict[str, object]) -> dict[str, object]:
     return enriched
 
 
+<<<<<<< HEAD
 def _application_payload(college: dict[str, object]) -> dict[str, object]:
     info = _get_application_info(str(college.get("name", "")))
     slug = str(info["slug"])
@@ -196,6 +202,11 @@ def _find_application_by_slug(slug: str) -> dict[str, object] | None:
             )
 
     return None
+=======
+def _application_entries() -> list[dict[str, object]]:
+    colleges = search_colleges(limit=6)
+    return [_enrich_college(college) for college in colleges]
+>>>>>>> ee56e33 (first test proto)
 
 
 @college_bp.get("/")
@@ -208,6 +219,7 @@ def index() -> str:
 @college_bp.get("/applications")
 @login_required
 def applications() -> str:
+<<<<<<< HEAD
     return render_template("dashboard/college_applications.html", colleges=_saved_application_cards())
 
 
@@ -231,6 +243,9 @@ def start_application() -> str:
     _upsert_application(college)
     flash(f"Started an application for {college_name}.", "success")
     return redirect(url_for("college.applications"))
+=======
+    return render_template("dashboard/college_applications.html", colleges=_application_entries())
+>>>>>>> ee56e33 (first test proto)
 
 
 @college_bp.post("/search")
@@ -277,15 +292,24 @@ def search() -> str:
 @college_bp.get("/apply/<college_slug>")
 @login_required
 def application_page(college_slug: str) -> str:
+<<<<<<< HEAD
     college = _find_saved_application(college_slug) or _find_application_by_slug(college_slug)
+=======
+    college = next((entry for entry in _application_entries() if entry["application_slug"] == college_slug), None)
+>>>>>>> ee56e33 (first test proto)
     if college is None:
         college = {
             "name": "College Application",
             "state": "",
             "public_private": "",
             "tuition_estimate": "",
+<<<<<<< HEAD
             "url": "",
             "website_url": "",
+=======
+            "match_score": 0,
+            "url": "",
+>>>>>>> ee56e33 (first test proto)
             "application_url": "",
             "application_page_url": "",
             "application_deadline": "Check the college admissions site for current deadlines.",

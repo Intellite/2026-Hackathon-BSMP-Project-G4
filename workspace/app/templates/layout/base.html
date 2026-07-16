@@ -32,6 +32,28 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="accessibilityDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Accessibility
+<<<<<<< HEAD
+=======
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accessibilityDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
+                  <li class="px-3 py-2">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="toggleDyslexia" />
+                      <label class="form-check-label" for="toggleDyslexia">Dyslexia-friendly font</label>
+                    </div>
+                  </li>
+                  <li class="px-3 py-2">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="toggleHighContrast" />
+                      <label class="form-check-label" for="toggleHighContrast">High contrast</label>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Menu
+>>>>>>> ee56e33 (first test proto)
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accessibilityDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
                   <li class="px-3 py-2">
@@ -64,6 +86,13 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="careerDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
                   <li><a class="dropdown-item" href="{{ url_for('careers.index') }}" style="color:#e2e8f0;">Career Explorer</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('roadmap.index') }}" style="color:#e2e8f0;">Career Roadmap</a></li>
+<<<<<<< HEAD
+=======
+                  <li><a class="dropdown-item" href="{{ url_for('gap.index') }}" style="color:#e2e8f0;">Opportunity Gap Detector</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('scholarships.index') }}" style="color:#e2e8f0;">Scholarships</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('budget.index') }}" style="color:#e2e8f0;">Budget Builder</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('college.applications') }}" style="color:#e2e8f0;">College Applications</a></li>
+>>>>>>> ee56e33 (first test proto)
                   <li><a class="dropdown-item" href="{{ url_for('mentor.index') }}" style="color:#e2e8f0;">AI Mentor</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('resume.index') }}" style="color:#e2e8f0;">Resume Analyzer</a></li>
                 </ul>
