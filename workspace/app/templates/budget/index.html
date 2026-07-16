@@ -1,0 +1,55 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+  <div class="card rounded-4 shadow-sm border-0 p-4">
+    <h2 class="h5 fw-bold">Budget Builder</h2>
+    <p class="text-muted small">Enter your costs and we’ll estimate what you can afford.</p>
+
+    <form method="post" action="{{ url_for('budget.index') }}" class="mt-3" aria-label="Budget builder form">
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="income">Monthly income (you/family)</label>
+          <input id="income" name="income" type="number" min="0" step="0.01" class="form-control" placeholder="e.g., 2500" required />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="savings">Monthly savings goal (optional)</label>
+          <input id="savings" name="savings" type="number" min="0" step="0.01" class="form-control" placeholder="e.g., 200" />
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="tuition">Estimated monthly tuition</label>
+          <input id="tuition" name="tuition" type="number" min="0" step="0.01" class="form-control" placeholder="e.g., 600" required />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="housing">Estimated monthly housing</label>
+          <input id="housing" name="housing" type="number" min="0" step="0.01" class="form-control" placeholder="e.g., 800" required />
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="transport">Estimated monthly transportation</label>
+          <input id="transport" name="transport" type="number" min="0" step="0.01" class="form-control" placeholder="e.g., 120" required />
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="other">Other monthly costs</label>
+          <input id="other" name="other" type="number" min="0" step="0.01" class="form-control" placeholder="e.g., 150" required />
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Calculate</button>
+        <a href="{{ url_for('budget.index') }}" class="btn btn-outline-primary">Reset</a>
+      </div>
+
+      {% if result %}
+        <div class="mt-4 p-3 rounded-3" style="background: rgba(0,120,212,0.08); border: 1px solid rgba(0,120,212,0.18);">
+          <h3 class="h6 fw-bold mb-2">Estimated result</h3>
+          <ul class="mb-0">
+            <li><strong>Total monthly costs:</strong> {{ result.total_costs }}</li>
+            <li><strong>Remaining after costs:</strong> {{ result.remaining }}</li>
+            <li><strong>Affordability:</strong> {{ result.affordability }}</li>
+          </ul>
+        </div>
+      {% endif %}
+    </form>
+  </div>
+{% endblock %}

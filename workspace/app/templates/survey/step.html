@@ -35,7 +35,7 @@
                   class="h-4 w-4"
                   {% if opt in selected_list %}checked{% endif %}
                 />
-                <span class="text-white">{{ opt }}</span>
+                <span class="text-white" style="color: #ffffff !important;" data-theme-light-color="#000000">{{ opt }}</span>
               </label>
             {% endfor %}
           {% else %}
@@ -48,7 +48,7 @@
                   class="h-4 w-4"
                   {% if selected == opt %}checked{% endif %}
                 />
-                <span class="text-white">{{ opt }}</span>
+                <span class="text-white" style="color: #ffffff !important;" data-theme-light-color="#000000">{{ opt }}</span>
               </label>
             {% endfor %}
           {% endif %}
@@ -57,7 +57,7 @@
 
       <div class="flex items-center justify-between pt-2">
         <a href="{{ url_for('survey.start') }}" class="text-slate-300 hover:text-white">Back</a>
-        <button type="submit" class="rounded-xl bg-blue-600 px-6 py-3 text-black font-semibold text-base hover:bg-blue-700">
+        <button type="submit" class="rounded-xl bg-transparent border border-blue-600/60 px-6 py-3 font-semibold text-base hover:bg-blue-600/10 hover:border-blue-600" style="color: #e0f2fe !important;" data-theme-light-color="#000000">
           Next
         </button>
       </div>

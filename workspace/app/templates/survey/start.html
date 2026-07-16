@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mx-auto px-4 py-10">
   <div class="max-w-2xl mx-auto">
-    <div class="survey-card rounded-2xl border border-slate-800 bg-slate-950 shadow-sm p-6 text-white theme-light:bg-white theme-light:text-slate-900">
+    <div class="survey-card rounded-2xl border border-slate-800 bg-slate-950 shadow-sm p-6 text-white theme-light:bg-white theme-light:text-slate-900 text-center">
       <div class="flex items-center justify-between gap-3">
       <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white"></div>
       <h1 class="text-2xl font-semibold mt-4" style="color: #e2e8f0;" data-theme-light-color="#0f172a">Take the survey to unlock features</h1>
@@ -11,16 +11,11 @@
         We’ll use your answers to personalize your Compass AI recommendations.
       </p>
 
-      <div class="mt-6 row g-3">
-        <div class="col-12 col-sm-6">
-        <a href="{{ url_for('survey.step', step=0) }}" class="btn btn-primary w-100 rounded-3 py-2.5 font-semibold" style="border:none;">
-          Take survey
-        </a>
-        </div>
-        <div class="col-12 col-sm-6">
-        <a href="{{ url_for('survey.retake') }}" class="btn btn-primary w-100 rounded-3 py-2.5 font-semibold" style="border:none;">
-          Retake survey
-        </a>
+      <div class="mt-6 row g-3 justify-content-center">
+        <div class="col-12 col-sm-6 d-flex justify-content-center">
+          <a href="{{ url_for('survey.step', step=0) }}" class="btn btn-primary w-100 rounded-3 py-2.5 font-semibold" style="border:none;">
+            Take survey
+          </a>
         </div>
       </div>
 

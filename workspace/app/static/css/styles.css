@@ -14,6 +14,24 @@ body{
   background: var(--bg);
 }
 
+/* Accessibility: dyslexia-friendly font toggle */
+body.dyslexia-font{
+  /* Use a common dyslexia-friendly font if available; otherwise fall back */
+  font-family: "OpenDyslexic", "Atkinson Hyperlegible", "Lexend", "Comic Sans MS", "Segoe UI", system-ui, -apple-system, Arial, sans-serif !important;
+  letter-spacing: 0.01em;
+}
+
+/* Accessibility: high contrast toggle */
+body.high-contrast{
+  filter: saturate(1.1) contrast(1.15);
+}
+
+body.high-contrast a,
+body.high-contrast .nav-link,
+body.high-contrast .dropdown-item{
+  text-decoration: underline;
+}
+
 /* Slightly larger logo in navbar */
 .navbar-brand img{
   width: 34px;

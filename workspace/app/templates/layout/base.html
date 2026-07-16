@@ -30,6 +30,25 @@
                 </button>
               </li>
               <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="accessibilityDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Accessibility
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accessibilityDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
+                  <li class="px-3 py-2">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="toggleDyslexia" />
+                      <label class="form-check-label" for="toggleDyslexia">Dyslexia-friendly font</label>
+                    </div>
+                  </li>
+                  <li class="px-3 py-2">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="toggleHighContrast" />
+                      <label class="form-check-label" for="toggleHighContrast">High contrast</label>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Menu
                 </a>
@@ -40,6 +59,8 @@
                   <li><a class="dropdown-item" href="{{ url_for('roadmap.index') }}" style="color:#e2e8f0;">Career Roadmap</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('gap.index') }}" style="color:#e2e8f0;">Opportunity Gap Detector</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('scholarships.index') }}" style="color:#e2e8f0;">Scholarships</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('budget.index') }}" style="color:#e2e8f0;">Budget Builder</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('college.applications') }}" style="color:#e2e8f0;">College Applications</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('mentor.index') }}" style="color:#e2e8f0;">AI Mentor</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('resume.index') }}" style="color:#e2e8f0;">Resume Analyzer</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('profile.index') }}" style="color:#e2e8f0;">Profile</a></li>
@@ -213,6 +234,44 @@
             localStorage.setItem(key, 'dark');
           }
         });
+
+        // Accessibility preferences (global)
+        const dysKey = 'compass_dyslexia_font';
+        const contrastKey = 'compass_high_contrast';
+
+        const dysToggle = document.getElementById('toggleDyslexia');
+        const contrastToggle = document.getElementById('toggleHighContrast');
+
+        const applyPrefs = () => {
+          const dys = localStorage.getItem(dysKey) === '1';
+          const contrast = localStorage.getItem(contrastKey) === '1';
+
+          if (dys) body.classList.add('dyslexia-font');
+          else body.classList.remove('dyslexia-font');
+
+          if (contrast) body.classList.add('high-contrast');
+          else body.classList.remove('high-contrast');
+
+          if (dysToggle) dysToggle.checked = dys;
+          if (contrastToggle) contrastToggle.checked = contrast;
+        };
+
+        applyPrefs();
+        window.addEventListener('storage', applyPrefs);
+
+        if (dysToggle) {
+          dysToggle.addEventListener('change', () => {
+            localStorage.setItem(dysKey, dysToggle.checked ? '1' : '0');
+            applyPrefs();
+          });
+        }
+
+        if (contrastToggle) {
+          contrastToggle.addEventListener('change', () => {
+            localStorage.setItem(contrastKey, contrastToggle.checked ? '1' : '0');
+            applyPrefs();
+          });
+        }
       })();
     </script>
   </body>

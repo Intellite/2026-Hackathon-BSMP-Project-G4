@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 import requests
+from bs4 import BeautifulSoup
 
 from config import Config
 
@@ -279,6 +280,211 @@ class AIService:
             return json.loads(text)
         except Exception:
             return {"colleges": []}
+
+    def generate_college_news_summary(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Return a 6-paragraph college summary plus recent news as strict JSON."""
+        self._ensure_rate_limit()
+        prompt = self._load_prompt("generate_college_news_summary")
+
+        college = payload.get("college", {}) if isinstance(payload, dict) else {}
+        name = str(college.get("name", "Unknown College"))
+        state = str(college.get("state", ""))
+
+        # Best-effort: fetch real recent news links + snippets.
+        # If it fails (no network / parsing issues), we fall back to placeholders.
+        recent_news: list[dict[str, str]] = []
+        try:
+            recent_news = self._fetch_recent_college_news(name=name, state=state, limit=3)
+        except Exception:
+            recent_news = []
+
+        if not (self.cfg.AI_API_KEY and self.cfg.AI_BASE_URL) and not self._use_azure:
+            college = payload.get("college", {}) if isinstance(payload, dict) else {}
+            # If we can't fetch real news, return empty list (no example text).
+            if not recent_news:
+                recent_news = []
+            return {
+                "college": {"name": name, "state": state},
+                "summary_paragraphs": [
+                    f"{name} offers a strong academic foundation with programs designed to help students build practical skills.",
+                    "Students typically benefit from hands-on learning opportunities, research exposure, and career-focused support.",
+                    "The campus experience often includes clubs, student organizations, and community events that help you find your people.",
+                    "Admissions and financial aid can vary by student profile, so it’s important to review requirements and deadlines early.",
+                    "Career outcomes are shaped by internships, networking, and leveraging campus resources like career services.",
+                    "If you’re considering this school, align your major interests with available pathways and support services to maximize fit.",
+                ],
+                "recent_news": recent_news,
+            }
+
+        # Provide fetched news (with real URLs) to the model.
+        messages = [
+            {"role": "system", "content": prompt or "You create college summaries and news."},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "college": {"name": name, "state": state},
+                        "recent_news": recent_news,
+                    }
+                ),
+            },
+        ]
+        text = self._with_retry(lambda: self._call_chat(messages))
+        try:
+            return json.loads(text)
+        except Exception:
+            return {"college": {}, "summary_paragraphs": [], "recent_news": []}
+
+    def _fetch_recent_college_news(
+        self, *, name: str, state: str, limit: int = 3
+    ) -> list[dict[str, str]]:
+        """Best-effort news fetch.
+
+        Uses DuckDuckGo HTML results (no API key). This is a prototype and may
+        break if the HTML structure changes.
+        """
+        query = f"{name} site:edu news".strip()
+        if state:
+            query = f"{name} {state} news".strip()
+
+        url = "https://duckduckgo.com/html/"
+        params = {"q": query}
+        headers = {"User-Agent": "Mozilla/5.0"}
+        resp = requests.get(url, params=params, headers=headers, timeout=20)
+        resp.raise_for_status()
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+        results: list[dict[str, str]] = []
+
+        # DuckDuckGo HTML results typically have anchors with class 'result__a'
+        for a in soup.select("a.result__a"):
+            href = a.get("href")
+            headline = a.get_text(strip=True)
+            if not href or not headline:
+                continue
+
+            # DuckDuckGo sometimes returns redirect/tracking URLs.
+            # Prefer the actual target URL when possible.
+            href = self._extract_actual_url(href)
+
+            # Best-effort: fetch the actual article page and extract a short summary.
+            article_title, article_date, article_snippet, article_source = "", "", "", ""
+            try:
+                article_title, article_date, article_snippet, article_source = self._extract_article_summary(
+                    url=href, fallback_title=headline
+                )
+            except Exception:
+                article_title, article_date, article_snippet, article_source = headline, "", "", ""
+
+            results.append(
+                {
+                    "headline": article_title or headline,
+                    "source": article_source or "News",
+                    "date": article_date,
+                    "snippet": article_snippet,
+                    "url": href,
+                }
+            )
+            if len(results) >= limit:
+                break
+
+        return results
+
+    def _extract_actual_url(self, href: str) -> str:
+        """Best-effort: unwrap DuckDuckGo redirect URLs to the real target."""
+        s = href.strip()
+        # Common DDG redirect pattern: https://duckduckgo.com/l/?uddg=<encoded>
+        if "duckduckgo.com/l/" in s and "uddg=" in s:
+            try:
+                from urllib.parse import parse_qs, urlparse, unquote
+
+                q = parse_qs(urlparse(s).query)
+                uddg = q.get("uddg", [""])[0]
+                if uddg:
+                    return unquote(uddg)
+            except Exception:
+                return s
+        return s
+
+    def _extract_article_summary(
+        self, *, url: str, fallback_title: str
+    ) -> tuple[str, str, str, str]:
+        """Fetch an article page and extract best-effort title/date/snippet.
+
+        Heuristics:
+        - title from <meta property="og:title"> or <title>
+        - date from common meta tags (best-effort)
+        - snippet from the first substantial paragraph(s)
+        """
+        headers = {"User-Agent": "Mozilla/5.0"}
+        resp = requests.get(url, headers=headers, timeout=20)
+        resp.raise_for_status()
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        title = ""
+        og_title = soup.select_one('meta[property="og:title"]')
+        if og_title and og_title.get("content"):
+            title = og_title.get("content").strip()
+        if not title:
+            if soup.title and soup.title.get_text(strip=True):
+                title = soup.title.get_text(strip=True)
+        if not title:
+            title = fallback_title
+
+        date = ""
+        for sel in [
+            'meta[property="article:published_time"]',
+            'meta[name="pubdate"]',
+            'meta[name="publishdate"]',
+            'meta[name="date"]',
+            'meta[property="og:updated_time"]',
+        ]:
+            el = soup.select_one(sel)
+            if el and el.get("content"):
+                date = el.get("content").strip()
+                break
+
+        # Normalize date to YYYY-MM-DD when possible.
+        date = self._normalize_date(date)
+
+        # Extract snippet: first few paragraphs with decent length.
+        snippet = ""
+        paragraphs = soup.select("p")
+        picked: list[str] = []
+        for p in paragraphs:
+            txt = p.get_text(" ", strip=True)
+            if len(txt) < 80:
+                continue
+            # Avoid nav/footer boilerplate
+            if any(x in txt.lower() for x in ["subscribe", "cookie", "advertisement"]):
+                continue
+            picked.append(txt)
+            if len(picked) >= 2:
+                break
+        if picked:
+            snippet = " ".join(picked)[:500]
+
+        # Best-effort source
+        source = ""
+        og_site = soup.select_one('meta[property="og:site_name"]')
+        if og_site and og_site.get("content"):
+            source = og_site.get("content").strip()
+
+        return title, date, snippet, source
+
+    def _normalize_date(self, raw: str) -> str:
+        """Normalize common date formats to YYYY-MM-DD (best-effort)."""
+        if not raw:
+            return ""
+        s = raw.strip()
+        # Handle ISO-like: 2026-06-15T12:34:56Z
+        if len(s) >= 10 and s[4] == "-" and s[7] == "-":
+            return s[:10]
+        # Handle YYYY/MM/DD
+        if len(s) >= 10 and s[4] == "/" and s[7] == "/":
+            return f"{s[0:4]}-{s[5:7]}-{s[8:10]}"
+        return ""
 
     def analyze_skill_gaps(self, payload: dict[str, Any]) -> dict[str, Any]:
         self._ensure_rate_limit()
