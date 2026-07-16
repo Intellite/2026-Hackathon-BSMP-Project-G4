@@ -25,6 +25,7 @@ def migrate_user_columns() -> None:
         "scholarship_category": "TEXT",
         "state": "TEXT",
         "other_circumstances": "TEXT",
+        "college_applications_json": "TEXT",
     }
 
     for col, col_type in additions.items():

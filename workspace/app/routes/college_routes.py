@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from flask import Blueprint, render_template, request
-from flask_login import login_required
+import json
 
-from app.services.college_finder import search_colleges
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
+
+from app import db
 from app.services.ai_service import AIService
+from app.services.college_finder import search_colleges
 from app.utils.survey_gating import survey_required
 
 
@@ -112,9 +115,87 @@ def _enrich_college(college: dict[str, object]) -> dict[str, object]:
     return enriched
 
 
-def _application_entries() -> list[dict[str, object]]:
-    colleges = search_colleges(limit=6)
-    return [_enrich_college(college) for college in colleges]
+def _application_payload(college: dict[str, object]) -> dict[str, object]:
+    info = _get_application_info(str(college.get("name", "")))
+    slug = str(info["slug"])
+    return {
+        "name": college.get("name", ""),
+        "state": college.get("state", ""),
+        "public_private": college.get("public_private", ""),
+        "tuition_estimate": college.get("tuition_estimate", ""),
+        "url": college.get("url", ""),
+        "website_url": college.get("url", ""),
+        "application_url": college.get("application_url") or info["application_url"],
+        "application_slug": slug,
+        "application_page_url": f"/college/apply/{slug}",
+        "application_deadline": info["deadline"],
+        "requirements": info["requirements"],
+        "notes": info["notes"],
+    }
+
+
+def _saved_application_cards() -> list[dict[str, object]]:
+    raw = getattr(current_user, "college_applications_json", "") or ""
+    if not raw:
+        return []
+
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return []
+
+    if not isinstance(data, list):
+        return []
+
+    cards: list[dict[str, object]] = []
+    for item in data:
+        if isinstance(item, dict):
+            cards.append(item)
+    return cards
+
+
+def _save_application_cards(cards: list[dict[str, object]]) -> None:
+    if hasattr(current_user, "college_applications_json"):
+        current_user.college_applications_json = json.dumps(cards)
+        db.session.commit()
+
+
+def _upsert_application(college: dict[str, object]) -> None:
+    payload = _application_payload(college)
+    cards = _saved_application_cards()
+    slug = payload["application_slug"]
+    cards = [card for card in cards if card.get("application_slug") != slug]
+    cards.append(payload)
+    _save_application_cards(cards)
+
+
+def _find_saved_application(slug: str) -> dict[str, object] | None:
+    for card in _saved_application_cards():
+        if card.get("application_slug") == slug:
+            return card
+    return None
+
+
+def _find_application_by_slug(slug: str) -> dict[str, object] | None:
+    for college in search_colleges(limit=6):
+        info = _get_application_info(str(college.get("name", "")))
+        if info["slug"] == slug:
+            return _application_payload(college)
+
+    for name, data in COLLEGE_APPLICATIONS.items():
+        if data.get("slug") == slug:
+            return _application_payload(
+                {
+                    "name": name,
+                    "state": "",
+                    "public_private": "",
+                    "tuition_estimate": "",
+                    "url": "",
+                    "application_url": data.get("application_url", ""),
+                }
+            )
+
+    return None
 
 
 @college_bp.get("/")
@@ -127,7 +208,29 @@ def index() -> str:
 @college_bp.get("/applications")
 @login_required
 def applications() -> str:
-    return render_template("dashboard/college_applications.html", colleges=_application_entries())
+    return render_template("dashboard/college_applications.html", colleges=_saved_application_cards())
+
+
+@college_bp.post("/start-application")
+@login_required
+@survey_required
+def start_application() -> str:
+    college_name = request.form.get("college_name", "").strip()
+    if not college_name:
+        flash("Please choose a college to start an application.", "warning")
+        return redirect(url_for("college.index"))
+
+    college = {
+        "name": college_name,
+        "state": request.form.get("state", ""),
+        "public_private": request.form.get("public_private", ""),
+        "tuition_estimate": request.form.get("tuition_estimate", ""),
+        "url": request.form.get("url", ""),
+        "application_url": request.form.get("application_url", ""),
+    }
+    _upsert_application(college)
+    flash(f"Started an application for {college_name}.", "success")
+    return redirect(url_for("college.applications"))
 
 
 @college_bp.post("/search")
@@ -174,15 +277,15 @@ def search() -> str:
 @college_bp.get("/apply/<college_slug>")
 @login_required
 def application_page(college_slug: str) -> str:
-    college = next((entry for entry in _application_entries() if entry["application_slug"] == college_slug), None)
+    college = _find_saved_application(college_slug) or _find_application_by_slug(college_slug)
     if college is None:
         college = {
             "name": "College Application",
             "state": "",
             "public_private": "",
             "tuition_estimate": "",
-            "match_score": 0,
             "url": "",
+            "website_url": "",
             "application_url": "",
             "application_page_url": "",
             "application_deadline": "Check the college admissions site for current deadlines.",

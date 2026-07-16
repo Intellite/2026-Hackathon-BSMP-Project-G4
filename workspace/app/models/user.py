@@ -34,6 +34,9 @@ class User(db.Model, UserMixin):
     state = db.Column(String(120), nullable=True)
     other_circumstances = db.Column(String(500), nullable=True)
 
+    # Saved college application cards
+    college_applications_json = db.Column(db.Text, nullable=True)
+
     survey_completed = db.Column(db.Boolean, nullable=False, default=False)
 
     # Admin authorization (prototype)

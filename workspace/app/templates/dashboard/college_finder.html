@@ -62,17 +62,22 @@
                       {% endif %}
                       <div class="small mt-1"><span class="fw-semibold">Match:</span> {{ c.match_score }}%</div>
                     </div>
-                    <div class="d-flex flex-column align-items-end gap-2">
-                      <form method="post" action="{{ url_for('college.news_summary') }}">
+                    <div class="d-flex flex-column align-items-stretch gap-2" style="min-width: 190px;">
+                      <form method="post" action="{{ url_for('college.news_summary') }}" class="w-100">
                         <input type="hidden" name="college_name" value="{{ c.name }}" />
                         <input type="hidden" name="college_state" value="{{ c.state }}" />
-                        <button class="btn btn-primary" type="submit">College News</button>
+                        <button class="btn btn-primary w-100" type="submit">College News</button>
                       </form>
-                      <a class="btn btn-outline-primary" href="{{ c.application_page_url }}">Application Page</a>
-                      {% if c.application_url %}
-                        <a class="btn btn-outline-secondary" href="{{ c.application_url }}" target="_blank" rel="noopener">Official Apply</a>
-                      {% endif %}
-                      <a class="btn btn-outline-primary" href="{{ c.url }}" target="_blank" rel="noopener">Visit</a>
+                      <form method="post" action="{{ url_for('college.start_application') }}" class="w-100">
+                        <input type="hidden" name="college_name" value="{{ c.name }}" />
+                        <input type="hidden" name="state" value="{{ c.state }}" />
+                        <input type="hidden" name="public_private" value="{{ c.public_private }}" />
+                        <input type="hidden" name="tuition_estimate" value="{{ c.tuition_estimate }}" />
+                        <input type="hidden" name="url" value="{{ c.url }}" />
+                        <input type="hidden" name="application_url" value="{{ c.application_url }}" />
+                        <button class="btn btn-outline-primary w-100" type="submit">Start Application</button>
+                      </form>
+                      <a class="btn btn-outline-primary w-100" href="{{ c.url }}" target="_blank" rel="noopener">Visit</a>
                     </div>
                   </div>
                 </div>

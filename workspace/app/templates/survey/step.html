@@ -1,67 +1,108 @@
 {% extends 'layout/base.html' %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-10">
   <div class="max-w-2xl mx-auto">
     <div class="mb-6">
-      <div class="text-sm text-slate-300">Question {{ step + 1 }} of {{ total }}</div>
+      <div class="text-sm text-slate-600 dark:text-slate-300">
+        Question {{ step + 1 }} of {{ total }}
+      </div>
     </div>
 
-    <div class="survey-block rounded-2xl border border-slate-800 bg-slate-950 shadow-sm p-6 text-white">
+    <div class="survey-block rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm p-6 text-slate-900 dark:text-white">
       <h1 class="text-2xl font-semibold">{{ question.prompt }}</h1>
-      <p class="text-slate-300 mt-2">Select at least one option to continue.</p>
+      <p class="mt-2 text-slate-600 dark:text-slate-300">
+        Select at least one option to continue.
+      </p>
 
       <form method="post" class="mt-6 space-y-4">
-      {% if question.type == 'other_text' %}
-        <div>
-          <label class="block text-sm font-medium text-slate-200">Your answer</label>
-          <textarea
-            name="choice"
-            rows="4"
-            class="mt-1 w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-white"
-            placeholder="Add any details that could help us recommend scholarships (optional but recommended)."
-          >{{ selected if selected is not none else '' }}</textarea>
-        </div>
-      {% else %}
-        <div class="grid gap-3">
-          {% if question.multi %}
-            {% set selected_list = selected if selected is iterable else [] %}
-            {% for opt in question.options %}
-              <label class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900 p-4 hover:border-blue-500 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="choice_multi"
-                  value="{{ opt }}"
-                  class="h-4 w-4"
-                  {% if opt in selected_list %}checked{% endif %}
-                />
-                <span class="text-white" style="color: #ffffff !important;" data-theme-light-color="#000000">{{ opt }}</span>
-              </label>
-            {% endfor %}
-          {% else %}
-            {% for opt in question.options %}
-              <label class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900 p-4 hover:border-blue-500 cursor-pointer">
-                <input
-                  type="radio"
-                  name="choice"
-                  value="{{ opt }}"
-                  class="h-4 w-4"
-                  {% if selected == opt %}checked{% endif %}
-                />
-                <span class="text-white" style="color: #ffffff !important;" data-theme-light-color="#000000">{{ opt }}</span>
-              </label>
-            {% endfor %}
-          {% endif %}
-        </div>
-      {% endif %}
+        {% if question.type == 'other_text' %}
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">
+              Your answer
+            </label>
+            <textarea
+              name="choice"
+              rows="1"
+              class="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white"
+              placeholder="e.g. 3.5"
+            >{{ selected if selected is not none else '' }}</textarea>
+          </div>
+        {% else %}
+          <div class="grid gap-3">
+            {% if question.multi %}
+              {% set selected_list = selected if selected is iterable else [] %}
+              {% for opt in question.options %}
+                <label class="flex items-center gap-3 rounded-xl border border-slate-300 dark:border-slate-800 bg-transparent dark:bg-slate-900 p-4 hover:border-blue-500 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="choice_multi"
+                    value="{{ opt }}"
+                    class="h-4 w-4"
+                    {% if opt in selected_list %}checked{% endif %}
+                  />
+                  <span class="text-slate-900 dark:text-white">{{ opt }}</span>
+                </label>
+              {% endfor %}
+            {% else %}
+              {% for opt in question.options %}
+                <label class="flex items-center gap-3 rounded-xl border border-slate-300 dark:border-slate-800 bg-transparent dark:bg-slate-900 p-4 hover:border-blue-500 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="choice"
+                    value="{{ opt }}"
+                    class="h-4 w-4"
+                    {% if selected == opt %}checked{% endif %}
+                  />
+                  <span class="text-slate-900 dark:text-white">{{ opt }}</span>
+                </label>
+              {% endfor %}
+            {% endif %}
+          </div>
+        {% endif %}
 
-      <div class="flex items-center justify-between pt-2">
-        <a href="{{ url_for('survey.start') }}" class="text-slate-300 hover:text-white">Back</a>
-        <button type="submit" class="rounded-xl bg-transparent border border-blue-600/60 px-6 py-3 font-semibold text-base hover:bg-blue-600/10 hover:border-blue-600" style="color: #e0f2fe !important;" data-theme-light-color="#000000">
-          Next
-        </button>
-      </div>
+        <div class="flex items-center justify-between pt-2">
+          <a
+            href="{{ url_for('survey.start') }}"
+            class="border border-slate-300 dark:border-slate-800 rounded-xl px-6 py-3 font-bold text-base text-slate-900 dark:text-sky-100 !no-underline hover:!no-underline hover:bg-slate-100 dark:hover:bg-slate-800"></a>
+            Back
+          </a>
+
+          <button
+            type="submit"
+            class="rounded-xl bg-blue border border-blue-600/60 px-6 py-3 font-bold text-base text-slate-900 dark:text-sky-100 hover:bg-blue-600/10 hover:border-blue-600"
+            id="nextButton"
+          >
+            Next
+          </button>
+        </div>
       </form>
+
+      <script>
+        // Make Enter trigger the Next (submit) button.
+        // (Browsers already submit forms on Enter in many cases, but this ensures consistent behavior.)
+        (function () {
+          const form = document.currentScript?.previousElementSibling?.tagName === 'FORM'
+            ? document.currentScript.previousElementSibling
+            : document.querySelector('form[method="post"]');
+          if (!form) return;
+
+          form.addEventListener('keydown', function (e) {
+            if (e.key !== 'Enter') return;
+            // Allow Enter to work normally in textarea (multi-line) if present.
+            const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (tag === 'textarea') return;
+
+            const active = document.activeElement;
+            if (active && active.type === 'checkbox') return;
+
+            const next = document.getElementById('nextButton');
+            if (next) {
+              e.preventDefault();
+              next.click();
+            }
+          });
+        })();
+      </script>
     </div>
   </div>
 </div>

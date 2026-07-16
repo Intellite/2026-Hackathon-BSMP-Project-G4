@@ -29,7 +29,7 @@
   </style>
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <div>
-      <h2 class="h4 fw-bold">Welcome, {{ current_user.name }} 👋</h2>
+      <h2 class="h4 fw-bold">Welcome, {{ user.username or user.name }} 👋</h2>
       <p class="text-muted small mb-0">Here’s your  snapshot for today.</p>
     </div>
   </div>

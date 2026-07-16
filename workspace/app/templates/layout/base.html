@@ -49,20 +49,42 @@
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Menu
+                <a class="nav-link dropdown-toggle" href="#" id="collegeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  College
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
-                  <li><a class="dropdown-item" href="{{ url_for('dashboard.index') }}" style="color:#e2e8f0;">Dashboard</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('survey.start') }}" style="color:#e2e8f0;">Survey</a></li>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="collegeDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
+                  <li><a class="dropdown-item" href="{{ url_for('college.index') }}" style="color:#e2e8f0;">College Finder</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('college.applications') }}" style="color:#e2e8f0;">College Applications</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="careerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Career
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="careerDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
                   <li><a class="dropdown-item" href="{{ url_for('careers.index') }}" style="color:#e2e8f0;">Career Explorer</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('roadmap.index') }}" style="color:#e2e8f0;">Career Roadmap</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('mentor.index') }}" style="color:#e2e8f0;">AI Mentor</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('resume.index') }}" style="color:#e2e8f0;">Resume Analyzer</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="opportunityDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Opportunity
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="opportunityDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
                   <li><a class="dropdown-item" href="{{ url_for('gap.index') }}" style="color:#e2e8f0;">Opportunity Gap Detector</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('scholarships.index') }}" style="color:#e2e8f0;">Scholarships</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('budget.index') }}" style="color:#e2e8f0;">Budget Builder</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('college.applications') }}" style="color:#e2e8f0;">College Applications</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('mentor.index') }}" style="color:#e2e8f0;">AI Mentor</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('resume.index') }}" style="color:#e2e8f0;">Resume Analyzer</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Account
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown" style="background-color: #0b1220; border-color: rgba(148,163,184,.25);">
+                  <li><a class="dropdown-item" href="{{ url_for('dashboard.index') }}" style="color:#e2e8f0;">Dashboard</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('survey.start') }}" style="color:#e2e8f0;">Survey</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('profile.index') }}" style="color:#e2e8f0;">Profile</a></li>
                   <li><hr class="dropdown-divider" /></li>
                   <li>
