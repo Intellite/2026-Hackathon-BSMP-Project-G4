@@ -64,6 +64,9 @@ def signup_post() -> str:
         username=form.username.data,
         password_hash=generate_password_hash(form.password.data),
         grade_level=form.grade_level.data,
+        # Backward compatibility: existing SQLite schema may still have
+        # a NOT NULL `is_admin` column from the removed admin prototype.
+        is_admin=False,
     )
     db.session.add(user)
     db.session.commit()

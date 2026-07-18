@@ -1,10 +1,13 @@
 {% extends 'layout/base.html' %}
 {% block content %}
+  <div class="landing-fullpage" aria-hidden="true"></div>
+
+  <div class="home-page">
+
   <section class="landing-hero py-5">
-    <div class="landing-hero__bg" aria-hidden="true"></div>
     <div class="container position-relative">
       <div class="row align-items-center g-4">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-6 opacity=100">
           <div class="hero-card p-4 p-md-5">
             <div class="d-inline-flex align-items-center gap-2 mb-3">
               <span class="badge badge-accent">New: Resume → Roadmap</span>
@@ -52,7 +55,7 @@
               </div>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-4 opacity:0.6">
               <div class="chart-placeholder chart-placeholder--transparent rounded-4 p-3">
                 <div class="d-flex align-items-center justify-content-between gap-3">
                   <div>
@@ -83,6 +86,75 @@
       </div>
     </div>
   </section>
+
+  <style>
+    /* Use background.webp for the entire landing page */
+    .landing-fullpage {
+      position: fixed;
+      inset: 0;
+      background-image: url("{{ url_for('static', filename='images/background.webp') }}") !important;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -1;
+      transform: scale(1.02);
+    }
+    body.theme-light .landing-fullpage {
+      background-image:url("{{ url_for('static', filename='images/background.webp') }}") !important;
+    }
+
+    /* Ensure content sits above the fixed background */
+    .landing-hero {
+      position: relative;
+      z-index: 1;
+    }
+
+
+    /* Hero card theme-aware opacity */
+    .hero-card {
+      background: rgba(11, 18, 32, 0.78) !important;
+      border: 1px solid rgba(148,163,184,.25) !important;
+      backdrop-filter: blur(6px);
+    }
+    .hero-card * {
+      color: #e2e8f0 !important;
+    }
+    body.theme-light .hero-card {
+      background: rgba(255, 255, 255, 0.82) !important;
+      border: 1px solid rgba(148,163,184,.35) !important;
+    }
+    body.theme-light .hero-card * {
+      color: #0f172a !important;
+    }
+
+    /* Liquid glass aesthetic for home page blocks */
+    .home-page .card,
+    .home-page .hero-card,
+    .home-page .chart-placeholder {
+      background: rgba(11, 18, 32, 0.62) !important;
+      border: 1px solid rgba(148,163,184,.25) !important;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .home-page .card *,
+    .home-page .hero-card *,
+    .home-page .chart-placeholder * {
+      color: #e2e8f0 !important;
+    }
+    body.theme-light .home-page .card,
+    body.theme-light .home-page .hero-card,
+    body.theme-light .home-page .chart-placeholder {
+      background: rgba(255, 255, 255, 0.82) !important;
+      border: 1px solid rgba(148,163,184,.35) !important;
+    }
+    body.theme-light .home-page .card *,
+    body.theme-light .home-page .hero-card *,
+    body.theme-light .home-page .chart-placeholder * {
+      color: #0f172a !important;
+    }
+
+    /* (card styling is handled by the liquid-glass block above) */
+  </style>
 
   <section class="py-3">
     <div class="container">
@@ -168,4 +240,6 @@
       </div>
     </div>
   </section>
+
+  </div>
 {% endblock %}

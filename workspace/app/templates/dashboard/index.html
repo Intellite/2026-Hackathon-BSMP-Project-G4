@@ -1,6 +1,36 @@
 {% extends 'layout/base.html' %}
 {% block content %}
   <style>
+    /* Dashboard background */
+    .dashboard-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .dashboard-page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("{{ url_for('static', filename='images/background.webp') }}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: saturate(1.05) contrast(1.02);
+      transform: scale(1.02);
+      z-index: 0;
+    }
+    .dashboard-page::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(11, 18, 32, 0.65);
+      z-index: 1;
+    }
+    .dashboard-page > * {
+      position: relative;
+      z-index: 2;
+    }
+
     .dashboard-card {
       transition: transform 160ms ease, box-shadow 160ms ease;
       will-change: transform;
@@ -27,14 +57,15 @@
       border: 1px solid rgba(148,163,184,.35) !important;
     }
   </style>
-  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-    <div>
-      <h2 class="h4 fw-bold">Welcome, {{ user.username or user.name }} 👋</h2>
-      <p class="text-muted small mb-0">Here’s your  snapshot for today.</p>
+  <div class="dashboard-page">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h2 class="h4 fw-bold">Welcome, {{ user.username or user.name }} 👋</h2>
+        <p class="text-muted small mb-0">Here’s your  snapshot for today.</p>
+      </div>
     </div>
-  </div>
 
-  <div class="row g-3">
+    <div class="row g-3">
     <div class="col-12 col-lg-4">
       <div class="card rounded-4 border-0 p-4 shadow dashboard-card" style="--hover-shadow: 0 10px 30px rgba(13,110,253,0.25);">
         <div class="text-muted small">Your next best steps</div>
@@ -129,6 +160,7 @@
           {% endfor %}
         </div>
       </div>
+    </div>
     </div>
   </div>
 {% endblock %}

@@ -40,8 +40,6 @@ class User(db.Model, UserMixin):
     survey_completed = db.Column(db.Boolean, nullable=False, default=False)
 
     # Admin authorization (prototype)
-    is_admin = db.Column(db.Boolean, nullable=False, default=False, index=True)
-
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
     def get_id(self) -> str:  # type: ignore[override]

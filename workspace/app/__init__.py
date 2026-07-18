@@ -59,7 +59,6 @@ def create_app() -> Flask:
     from app.routes.college_routes import college_bp
     from app.routes.profile_routes import profile_bp
     from app.routes.settings_routes import settings_bp
-    from app.routes.admin_routes import admin_bp
     from app.routes.budget_routes import budget_bp
 
     app.register_blueprint(home_bp)
@@ -75,7 +74,6 @@ def create_app() -> Flask:
     app.register_blueprint(college_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(settings_bp)
-    app.register_blueprint(admin_bp)
     app.register_blueprint(budget_bp)
 
     # Create tables
